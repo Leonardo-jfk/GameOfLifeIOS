@@ -17,11 +17,19 @@ struct GameView: View {
                 .ignoresSafeArea()
             
             VStack {
-                
-            Rectangle()
-                    .colorMultiply(.black)
+                RoundedRectangle(cornerRadius: 30)
+                    .colorMultiply(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.all, 50)
+//                    .cornerRadius(30)
+            }
+            VStack {
+                RoundedRectangle(cornerRadius: 30)
+                    .colorMultiply(.white)
+//                    .opacity(0.6)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.all, 70)
+//                    .cornerRadius(30)
             }
             .padding()
         }

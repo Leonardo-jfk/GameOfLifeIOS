@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var showingGame = false
+    
     var body: some View {
         ZStack{
             Image("BackLight")
@@ -21,6 +23,30 @@ struct ContentView: View {
                     .resizable()
                     .frame(width: 200, height: 200, alignment: .center)
                 Text("Hello, world!")
+                Button(action: {
+                    withAnimation(.spring()) {
+                        showingGame.toggle()
+                    }
+                }) {
+                    Text("Start Game").foregroundStyle(.white)
+                }
+                if showingGame {
+                    GameView()
+                }
+                else {
+                    ZStack(alignment: .center,) {
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            .fill(Color.black.opacity(0.8))
+                            .frame(height: 110)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 70)
+                        
+                        Text("Get today's wisdom")
+                            .font(.title3)
+                            .bold()
+                            .foregroundStyle(.white)
+                    }
+                }
             }
             .padding()
         }
@@ -28,5 +54,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(showingGame: true)
 }
