@@ -9,37 +9,26 @@ import SwiftUI
 
 struct ContentView: View {
     @State var showingGame = false
-    
+    @State private var path = NavigationPath()
     var body: some View {
-        ZStack{
-            Image("BackLight")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-            
-            VStack {
-                
-                Image(systemName: "globe")
+        NavigationStack(path: $path) {
+            // Ta vue principale
+            ZStack{
+                Image("BackLight")
                     .resizable()
-                    .frame(width: 200, height: 200, alignment: .center)
-                Text("Hello, world!")
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 Button(action: {
                     withAnimation(.spring()) {
-                        showingGame.toggle()
+                        path.append("game")
                     }
                 }) {
-                    Text("Start Game").foregroundStyle(.white)
-                }
-                if showingGame {
-                    GameView()
-                }
-                else {
-                    ZStack(alignment: .center,) {
+                    ZStack(alignment: .center) {
                         RoundedRectangle(cornerRadius: 30, style: .continuous)
                             .fill(Color.black.opacity(0.8))
                             .frame(height: 110)
                             .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 70)
+                            .padding(.horizontal, 90)
                         
                         Text("Get today's wisdom")
                             .font(.title3)
@@ -47,12 +36,37 @@ struct ContentView: View {
                             .foregroundStyle(.white)
                     }
                 }
+                .navigationDestination(for: String.self) { destination in
+                    if destination == "game" {
+                        GameItself()
+                    }
+                }
             }
-            .padding()
-        }
+        } 
+        
     }
+       
 }
+
 
 #Preview {
     ContentView(showingGame: true)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
