@@ -21,7 +21,7 @@ import Combine
 
 struct GameItself: View {
     // On initialise notre modèle avec une grille de 20x20
-    @StateObject private var game = GameOfLifeModel(rows: 38, cols: 20)
+    @StateObject private var game = GameOfLifeModel(rows: 40, cols: 20)
     
     // Timer pour l'animation automatique
     @State private var isRunning = false
@@ -29,11 +29,6 @@ struct GameItself: View {
 
     var body: some View {
         ZStack(alignment: .center){
-//            DotLottieAnimation(fileName: "LoopBack", config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
-//                .view()
-//                .aspectRatio(contentMode: .fill)
-//                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-//                .ignoresSafeArea()
             DotLottieAnimation(fileName: "LoopBack", config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
                 .view()
                 .scaledToFill() // Utilise scaledToFill au lieu de aspectRatio
