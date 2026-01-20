@@ -28,8 +28,19 @@ struct GameItself: View {
     let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        VStack {
-            Text("Jeu de la Vie")
+        ZStack(alignment: .center){
+//            DotLottieAnimation(fileName: "LoopBack", config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
+//                .view()
+//                .aspectRatio(contentMode: .fill)
+//                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+//                .ignoresSafeArea()
+            DotLottieAnimation(fileName: "LoopBack", config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
+                .view()
+                .scaledToFill() // Utilise scaledToFill au lieu de aspectRatio
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .ignoresSafeArea()
+            VStack {
+                Text("Jeu de la Vie")
                 .font(.largeTitle)
                 .bold()
                 .padding()
@@ -37,7 +48,7 @@ struct GameItself: View {
             // Création de la Grille
             GeometryReader { geometry in
                 let cellSize = geometry.size.width / CGFloat(game.cols)
-             
+                
                 VStack(spacing: 0){
                     ForEach(0..<game.rows, id: \.self) { r in
                         HStack(spacing: 0){
@@ -53,19 +64,6 @@ struct GameItself: View {
                         }
                     }
                 }
-//                .padding(.top, 20)
-                                .frame(width: 300, height: 600)
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 20)
-//                        .stroke(
-//                            LinearGradient(
-//                                colors: [.blue, .purple, .cyan],
-//                                startPoint: .topLeading,
-//                                endPoint: .bottomTrailing
-//                            ),
-//                            lineWidth: 4
-//                        )
-//                )
             }
             .frame(width: 300, height: 600, alignment: .center)
             .padding(.horizontal, 20)
@@ -84,20 +82,20 @@ struct GameItself: View {
                         lineWidth: 10
                     )
             )
-
+            
             // Contrôles
             HStack(spacing: 30) {
                 Button(action: { game.reset() }) {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.title)
                 }
-
+                
                 Button(action: { isRunning.toggle() }) {
                     Image(systemName: isRunning ? "pause.fill" : "play.fill")
                         .font(.largeTitle)
                         .foregroundColor(isRunning ? .orange : .green)
                 }
-
+                
                 Button(action: { game.nextGeneration() }) {
                     Image(systemName: "forward.fill")
                         .font(.title)
@@ -110,6 +108,7 @@ struct GameItself: View {
                 game.nextGeneration()
             }
         }
+    }
     }
 }
 
@@ -207,6 +206,23 @@ class GameOfLifeModel: ObservableObject {
         board[row][col].toggle()
     }
 }
+
+
+
+
+//struct GameItselfView: View {
+//    var body: some View {
+//        GameItself()
+//            .background(
+//                DotLottieAnimation(fileName: "LoopBack",
+//                                   config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
+//                    .view()
+//                    .scaledToFill()
+//                    .overlay(Color.black.opacity(0.3))
+//                    .ignoresSafeArea()
+//            )
+//    }
+//}
 
 
 #Preview {
