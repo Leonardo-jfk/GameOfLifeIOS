@@ -36,9 +36,10 @@ struct OfLife: View {
                         .ignoresSafeArea()
             VStack {
                 Text("Jeu de la Vie")
-                .font(.largeTitle)
-                .bold()
-                .padding()
+                    .font(.system(size: 40, weight: .bold, design: .serif))
+                    .foregroundColor(.white)
+                    .shadow(color: .black, radius: 3)
+                    .padding(.top, 10)
             Spacer()
             // Création de la Grille
             GeometryReader { geometry in

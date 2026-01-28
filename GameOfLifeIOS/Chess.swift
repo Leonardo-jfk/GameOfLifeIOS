@@ -241,56 +241,425 @@ class ChessGame: ObservableObject {
 
 // MARK: - Vue principale des Échecs
 
+//struct Chess: View {
+//    @StateObject private var game = ChessGame()
+//    @State private var showWinnerAlert = false
+//    @State private var winner: PieceColor?
+//    
+//    var body: some View {
+//        ZStack {
+//            // Arrière-plan animé (gardé de votre code original)
+//            Image("BackChess")
+//                .resizable()
+//                .scaledToFill()
+//                .ignoresSafeArea()
+//            
+//            VStack(spacing: 15) {
+//                Text("ÉCHECS")
+//                    .font(.system(size: 40, weight: .bold, design: .serif))
+//                    .foregroundColor(.white)
+//                    .shadow(color: .black, radius: 3)
+//                    .padding(.top, 10)
+//                
+//                
+//                
+//                
+//                
+//                // Rectangle unique pour toutes les informations
+//                //                RoundedRectangle(cornerRadius: 25)
+//                //                    .fill(Color.black.opacity(0.8))
+//                //                    .frame(height: 220)
+//                //                    .overlay(
+//                //                        VStack(spacing: 15) {
+//                //                            // Section supérieure : Informations de jeu
+//                //                            HStack(spacing: 25) {
+//                //                                CapturedPiecesView(pieces: game.capturedBlackPieces, color: .black)
+//                //
+//                //                                VStack(spacing: 5) {
+//                //                                    Text("TOUR DE")
+//                //                                        .font(.caption)
+//                //                                        .foregroundColor(.gray)
+//                //
+//                //                                    HStack(spacing: 8) {
+//                //                                        Circle()
+//                //                                            .fill(game.currentPlayer == .white ? Color.white : Color.black)
+//                //                                            .frame(width: 20, height: 20)
+//                //
+//                //                                        Text(game.currentPlayer == .white ? "BLANCS" : "NOIRS")
+//                //                                            .font(.title3)
+//                //                                            .bold()
+//                //                                            .foregroundColor(game.currentPlayer == .white ? .white : .black)
+//                //                                    }
+//                //                                }
+//                //
+//                //                                CapturedPiecesView(pieces: game.capturedWhitePieces, color: .white)
+//                //                            }
+//                //                            .padding(.top, 15)
+//                //
+//                //                            // Ligne séparatrice
+//                //                            Rectangle()
+//                //                                .fill(Color.gray.opacity(0.3))
+//                //                                .frame(height: 1)
+//                //                                .padding(.horizontal, 20)
+//                //
+//                //                            // Section inférieure : Contrôles
+//                //                            HStack(spacing: 40) {
+//                //                                ControlButton(icon: "arrow.counterclockwise", color: .blue, label: "Nouvelle\nPartie")
+//                //                                ControlButton(icon: "arrow.uturn.backward", color: .orange, label: "Annuler\nCoup")
+//                //                                ControlButton(icon: "hand.draw", color: .green, label: "Match\nNul")
+//                //                                ControlButton(icon: "xmark", color: .red, label: "Quitter\nPartie")
+//                //                            }
+//                //                            .padding(.bottom, 15)
+//                //                        }
+//                //                    )
+//                //                    .padding(.horizontal, 20)
+//                
+//                
+//                // Rectangle pour les informations de jeu
+//                RoundedRectangle(cornerRadius: 20)
+//                    .fill(Color.black.opacity(0.7))
+//                    .frame(height: 100)
+//                    .overlay(
+//                        HStack(spacing: 25) {
+//                            // Pièces capturées noires
+//                            CapturedPiecesView(pieces: game.capturedBlackPieces, color: .black)
+//                            
+//                            Spacer()
+//                            
+//                            // Informations du joueur courant
+//                            // Rectangle unique pour toutes les informations
+//                            RoundedRectangle(cornerRadius: 25)
+//                                .fill(Color.black.opacity(0.8))
+//                                .frame(height: 220)
+//                                .overlay(
+//                                    VStack(spacing: 15) {
+//                                        // Section supérieure : Informations de jeu
+//                                        HStack(spacing: 25) {
+//                                            CapturedPiecesView(pieces: game.capturedBlackPieces, color: .black)
+//                                            
+//                                            VStack(spacing: 5) {
+//                                                Text("TOUR DE")
+//                                                    .font(.caption)
+//                                                    .foregroundColor(.gray)
+//                                                
+//                                                HStack(spacing: 8) {
+//                                                    
+//                                                    Image(systemName: game.currentPlayer == .white ? "dpad.fill" : "dpad")
+//                                                          .font(.system(size: 16))
+//                                                          .foregroundColor(game.currentPlayer == .white ? .white : .black)
+//                                                    
+//                                                    Text(game.currentPlayer == .white ? "BLANCS" : "NOIRS")
+//                                                        .font(.title3)
+//                                                        .bold()
+//                                                        .foregroundColor(game.currentPlayer == .white ? .white : .black)
+//                                                }
+//                                            }
+//                                            
+//                                            CapturedPiecesView(pieces: game.capturedWhitePieces, color: .white)
+//                                        }
+//                                        .padding(.top, 15)
+//                                        
+//                                        // Ligne séparatrice
+////                                        Rectangle()
+////                                            .fill(Color.gray.opacity(0.3))
+////                                            .frame(height: 1)
+////                                            .padding(.horizontal, 20)
+//                                        
+//                                        // Section inférieure : Contrôles
+//                                                                            }
+//                                )
+//                                .padding(.horizontal, 20)
+//            
+//                        
+//                        Spacer()
+//                            
+//                            // Pièces capturées blanches
+//                            CapturedPiecesView(pieces: game.capturedWhitePieces, color: .white)
+//                        }
+//                        .padding(.horizontal, 20)
+//                    )
+//                    .padding(.horizontal, 20)
+//                    .shadow(radius: 5)
+//                
+//                // Échiquier
+//                ChessBoardView(game: game)
+//                    .frame(width: 350, height: 350)
+//                    .background(Color.black.opacity(0.3))
+//                    .cornerRadius(15)
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 15)
+//                            .stroke(
+//                                LinearGradient(
+//                                    colors: [.gold, .yellow, .orange],
+//                                    startPoint: .topLeading,
+//                                    endPoint: .bottomTrailing
+//                                ),
+//                                lineWidth: 4
+//                            )
+//                    )
+//                    .shadow(radius: 10)
+//                
+//                // Rectangle pour les boutons de contrôle
+//                RoundedRectangle(cornerRadius: 25)
+//                    .fill(
+//                        LinearGradient(
+//                            colors: [Color.black.opacity(0.8), Color.gray.opacity(0.3)],
+//                            startPoint: .top,
+//                            endPoint: .bottom
+//                        )
+//                    )
+//                    .frame(height: 120)
+//                    .overlay(
+//                        HStack(spacing: 30) {
+//                            // Bouton Nouvelle Partie
+//                            VStack(spacing: 8) {
+//                                Button(action: {
+//                                    game.resetGame()
+//                                }) {
+//                                    Circle()
+//                                        .fill(Color.blue)
+//                                        .frame(width: 50, height: 50)
+//                                        .overlay(
+//                                            Image(systemName: "arrow.counterclockwise")
+//                                                .font(.title2)
+//                                                .foregroundColor(.white)
+//                                        )
+//                                }
+//                                
+//                                Text("Nouvelle")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                                Text("Partie")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                            }
+//                            
+//                            // Bouton Annuler
+//                            VStack(spacing: 8) {
+//                                Button(action: {
+//                                    // Logique pour annuler le dernier coup
+//                                    print("Annuler le coup")
+//                                }) {
+//                                    Circle()
+//                                        .fill(Color.orange)
+//                                        .frame(width: 50, height: 50)
+//                                        .overlay(
+//                                            Image(systemName: "arrow.uturn.backward")
+//                                                .font(.title2)
+//                                                .foregroundColor(.white)
+//                                        )
+//                                }
+//                                
+//                                Text("Annuler")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                                Text("Coup")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                            }
+//                            
+//                            // Bouton Match Nul
+//                            VStack(spacing: 8) {
+//                                Button(action: {
+//                                    showWinnerAlert = true
+//                                    winner = .white // Exemple: blancs gagnent
+//                                }) {
+//                                    Circle()
+//                                        .fill(Color.green)
+//                                        .frame(width: 50, height: 50)
+//                                        .overlay(
+//                                            Image(systemName: "hand.draw")
+//                                                .font(.title2)
+//                                                .foregroundColor(.white)
+//                                        )
+//                                }
+//                                
+//                                Text("Match")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                                Text("Nul")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                            }
+//                            
+//                            // Bouton Quitter
+//                            VStack(spacing: 8) {
+//                                Button(action: {
+//                                    // Action pour quitter la partie
+//                                    print("Quitter la partie")
+//                                }) {
+//                                    Circle()
+//                                        .fill(Color.red)
+//                                        .frame(width: 50, height: 50)
+//                                        .overlay(
+//                                            Image(systemName: "xmark")
+//                                                .font(.title2)
+//                                                .foregroundColor(.white)
+//                                        )
+//                                }
+//                                
+//                                Text("Quitter")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                                Text("Partie")
+//                                    .font(.caption)
+//                                    .foregroundColor(.white)
+//                            }
+//                        }
+//                        .padding(.horizontal, 20)
+//                    )
+//                    .padding(.horizontal, 20)
+//                    .shadow(color: .black.opacity(0.5), radius: 8, y: 5)
+//                
+//                Spacer()
+//            }
+//            .padding(.vertical)
+//        }
+//        .alert("Fin de Partie", isPresented: $showWinnerAlert) {
+//            Button("Nouvelle Partie") {
+//                game.resetGame()
+//            }
+//            Button("Menu Principal") {
+//                // Retour au menu principal
+//            }
+//        } message: {
+//            if let winner = winner {
+//                Text("Les \(winner == .white ? "BLANCS" : "NOIRS") ont gagné !")
+//            } else {
+//                Text("Match nul !")
+//            }
+//        }
+//    }
+//}
+
+
+
+
+
+
+
+
+
 struct Chess: View {
     @StateObject private var game = ChessGame()
+    @State private var showWinnerAlert = false
+    @State private var winner: PieceColor?
     
     var body: some View {
         ZStack {
-            // Arrière-plan animé (gardé de votre code original)
-            DotLottieAnimation(fileName: "LoopBack",
-                              config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
-                .view()
+            // Arrière-plan
+            Image("BackChess")
+                .resizable()
                 .scaledToFill()
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .ignoresSafeArea()
             
-            VStack(spacing: 20) {
+            VStack(spacing: 15) {
                 Text("ÉCHECS")
                     .font(.system(size: 40, weight: .bold, design: .serif))
                     .foregroundColor(.white)
                     .shadow(color: .black, radius: 3)
+                    .padding(.top, 10)
                 
-                HStack {
-                    // Pièces capturées noires
-                    CapturedPiecesView(pieces: game.capturedBlackPieces, color: .black)
-                    
-                    Spacer()
-                    
-                    // Joueur courant
-                    VStack {
-                        Text("Tour de")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Text(game.currentPlayer == .white ? "BLANCS" : "NOIRS")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(game.currentPlayer == .white ? .white : .black)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 5)
-                            .background(
-                                Capsule()
-                                    .fill(game.currentPlayer == .white ? Color.white.opacity(0.3) : Color.black.opacity(0.3))
-                            )
-                    }
-                    
-                    Spacer()
-                    
-                    // Pièces capturées blanches
-                    CapturedPiecesView(pieces: game.capturedWhitePieces, color: .white)
-                }
-                .padding(.horizontal)
+                // Rectangle unique pour TOUTES les informations
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.black.opacity(0.5))
+                    .frame(height: 220)
+                    .overlay(
+                        VStack(spacing: 15) {
+                            // Section supérieure : Informations de jeu
+                            HStack(spacing: 25) {
+                                // Pièces capturées noires
+                                CapturedPiecesView(pieces: game.capturedBlackPieces, color: .white)
+                                
+                                // Tour de qui
+                                VStack(spacing: 5) {
+                                    Text("TOUR DE")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                    
+                                    HStack(spacing: 8) {
+//                                        Image(systemName: game.currentPlayer == .white ? "dpad.fill" : "dpad")
+//                                            .font(.system(size: 18))
+//                                            .foregroundColor(game.currentPlayer == .white ? .white : .black)
+                                        
+                                        Text(game.currentPlayer == .white ? "BLANCS" : "NOIRS")
+                                            .font(.title3)
+                                            .bold()
+                                            .foregroundColor(.white )
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 10)
+                                    .background(
+                                        Capsule()
+                                            .fill(
+                                                game.currentPlayer == .white ?
+                                                Color.white.opacity(0.2) :
+                                                Color.black.opacity(0.4)
+                                            )
+                                    )
+                                }
+                                
+                                // Pièces capturées blanches
+                                CapturedPiecesView(pieces: game.capturedWhitePieces, color: .white)
+                            }
+                            .padding(.top, 15)
+                            
+                            // Ligne séparatrice
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 1)
+                                .padding(.horizontal, 20)
+                            
+                            // Section inférieure : Contrôles
+                            HStack(spacing: 40) {
+                                // Bouton Nouvelle Partie
+                                ControlButton(
+                                    icon: "arrow.counterclockwise",
+//                                    color: .blue,
+                                    primaryText: "Nouvelle",
+                                    secondaryText: "Partie"
+                                ) {
+                                    game.resetGame()
+                                }
+                                
+                                // Bouton Annuler
+                                ControlButton(
+                                    icon: "arrow.uturn.backward",
+//                                    color: .orange,
+                                    primaryText: "Annuler",
+                                    secondaryText: "Coup"
+                                ) {
+                                    print("Annuler le coup")
+                                }
+                                
+                                // Bouton Match Nul
+                                ControlButton(
+                                    icon: "hand.draw",
+//                                    color: .green,
+                                    primaryText: "Match",
+                                    secondaryText: "Nul"
+                                ) {
+                                    showWinnerAlert = true
+                                    winner = nil
+                                }
+                                
+                                // Bouton Quitter
+                                ControlButton(
+                                    icon: "xmark",
+//                                    color: .red,
+                                    primaryText: "Quitter",
+                                    secondaryText: "Partie"
+                                ) {
+                                    print("Quitter la partie")
+                                }
+                            }
+                            .padding(.bottom, 15)
+                        }
+                    )
+                    .padding(.horizontal, 20)
+                    .shadow(radius: 10)
                 
+                Spacer()
                 // Échiquier
                 ChessBoardView(game: game)
                     .frame(width: 350, height: 350)
@@ -309,42 +678,121 @@ struct Chess: View {
                     )
                     .shadow(radius: 10)
                 
-                // Contrôles
-                HStack(spacing: 40) {
-                    Button(action: { game.resetGame() }) {
-                        ControlButton(icon: "arrow.counterclockwise",
-                                    color: .blue,
-                                    label: "Nouvelle Partie")
-                    }
-                    
-                    Button(action: {
-                        // Animation pour annuler le coup (simplifié)
-                        game.resetGame()
-                    }) {
-                        ControlButton(icon: "arrow.uturn.backward",
-                                    color: .orange,
-                                    label: "Annuler")
-                    }
-                    
-                    Button(action: {
-                        // Option pour proposer match nul
-                        print("Match nul proposé")
-                    }) {
-                        ControlButton(icon: "hand.draw",
-                                    color: .green,
-                                    label: "Nul")
-                    }
-                }
-                .padding(.top, 20)
-                
                 Spacer()
             }
-            .padding()
+            .padding(.vertical)
+        }
+        .alert("Fin de Partie", isPresented: $showWinnerAlert) {
+            Button("Nouvelle Partie") {
+                game.resetGame()
+            }
+            Button("Menu Principal") {
+                // Retour au menu principal
+            }
+        } message: {
+            if let winner = winner {
+                Text("Les \(winner == .white ? "BLANCS" : "NOIRS") ont gagné !")
+            } else {
+                Text("Match nul !")
+            }
         }
     }
 }
 
-// MARK: - Vue de l'échiquier
+// Vue pour les boutons de contrôle réutilisable
+struct ControlButton: View {
+    let icon: String
+//    let color: Color
+    let primaryText: String
+    let secondaryText: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 5) {
+                Circle()
+                    .fill(.gray)
+                    .frame(width: 50, height: 50)
+                    .overlay(
+                        Image(systemName: icon)
+                            .font(.title2)
+                            .foregroundColor(.white)
+                    )
+                
+                VStack(spacing: 2) {
+                    Text(primaryText)
+                        .font(.caption)
+                        .foregroundColor(.white)
+                    Text(secondaryText)
+                        .font(.caption)
+                        .foregroundColor(.white)
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// MARK: - Vue des pièces capturées (modifiée pour s'adapter au rectangle)
+
+struct CapturedPiecesView: View {
+    let pieces: [ChessPiece]
+    let color: PieceColor
+    
+    var body: some View {
+        VStack(alignment: .center, spacing: 5) {
+            Text(color == .white ? "BLANCS" : "NOIRS")
+                .font(.caption)
+                .bold()
+                .foregroundColor(color == .white ? .white : .black)
+            
+            if pieces.isEmpty {
+                Text("Aucune")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+                    .frame(width: 80, height: 20)
+            } else {
+                HStack(spacing: 2) {
+                    ForEach(pieces.prefix(5)) { piece in
+                        Text(piece.type.rawValue)
+                            .font(.system(size: 16))
+                            .foregroundColor(piece.color == .white ? .white : .black)
+                    }
+                    
+                    if pieces.count > 5 {
+                        Text("+\(pieces.count - 5)")
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                    }
+                }
+                .frame(width: 80, height: 20)
+            }
+            
+            Text("\(pieces.count) captures")
+                .font(.caption2)
+                .foregroundColor(.gray)
+        }
+        .frame(width: 90)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(color == .white ? Color.white.opacity(0.1) : Color.black.opacity(0.3))
+        )
+    }
+}
+
+
+// MARK: - Vue de l'échiquier (inchangée)
 
 struct ChessBoardView: View {
     @ObservedObject var game: ChessGame
@@ -405,23 +853,8 @@ struct ChessSquareView: View {
                     .foregroundColor(piece.color == .white ? .white : .black)
                     .shadow(color: .gray, radius: 1)
             }
-            
-            // Coordonnées (optionnel)
-            if row == 7 {
-                Text(String(UnicodeScalar(65 + col)!))
-                    .font(.caption)
-                    .foregroundColor(isLightSquare ? Color(hex: "#B58863") : Color(hex: "#F0D9B5"))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                    .padding(2)
-            }
-            if col == 0 {
-                Text("\(8 - row)")
-                    .font(.caption)
-                    .foregroundColor(isLightSquare ? Color(hex: "#B58863") : Color(hex: "#F0D9B5"))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(2)
-            }
         }
+        .aspectRatio(1, contentMode: .fit)
         .onTapGesture {
             if let selected = game.selectedPiece, isValidMove {
                 game.movePiece(to: row, col: col)
@@ -432,61 +865,30 @@ struct ChessSquareView: View {
     }
 }
 
-// MARK: - Vue des pièces capturées
-
-struct CapturedPiecesView: View {
-    let pieces: [ChessPiece]
-    let color: PieceColor
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(color == .white ? "Blancs:" : "Noirs:")
-                .font(.caption)
-                .foregroundColor(.white)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(pieces) { piece in
-                        Text(piece.type.rawValue)
-                            .font(.system(size: 20))
-                            .foregroundColor(piece.color == .white ? .white : .black)
-                            .padding(5)
-                            .background(
-                                Circle()
-                                    .fill(Color.gray.opacity(0.3))
-                            )
-                    }
-                }
-            }
-            .frame(width: 150, height: 40)
-        }
-    }
-}
-
 // MARK: - Bouton de contrôle stylisé
 
-struct ControlButton: View {
-    let icon: String
-    let color: Color
-    let label: String
-    
-    var body: some View {
-        VStack {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(.white)
-                .frame(width: 50, height: 50)
-                .background(
-                    Circle()
-                        .fill(color)
-                )
-            
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.white)
-        }
-    }
-}
+//struct ControlButton: View {
+//    let icon: String
+//    let color: Color
+//    let label: String
+//    
+//    var body: some View {
+//        VStack {
+//            Image(systemName: icon)
+//                .font(.title2)
+//                .foregroundColor(.white)
+//                .frame(width: 50, height: 50)
+//                .background(
+//                    Circle()
+//                        .fill(color)
+//                )
+//            
+//            Text(label)
+//                .font(.caption)
+//                .foregroundColor(.white)
+//        }
+//    }
+//}
 
 // MARK: - Extension pour les couleurs hex
 
@@ -527,3 +929,12 @@ extension Color {
 extension Color {
     static let gold = Color(hex: "#FFD700")
 }
+
+
+
+
+
+
+
+
+
