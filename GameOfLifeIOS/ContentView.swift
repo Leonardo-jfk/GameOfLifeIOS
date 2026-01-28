@@ -47,7 +47,7 @@ struct ContentView: View {
                     }
                     .navigationDestination(for: String.self) { destination in
                         if destination == "game" {
-                            GameItself()
+                            OfLife()
                         }
                     }
                     
@@ -71,7 +71,7 @@ struct ContentView: View {
                     }
                     .navigationDestination(for: String.self) { destination in
                         if destination == "game" {
-                            GameItself()
+                            Chess()
                         }
                     }
                     Spacer()

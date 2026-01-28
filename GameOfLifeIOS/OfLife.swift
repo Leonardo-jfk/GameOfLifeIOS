@@ -19,7 +19,7 @@ import Combine
 
 
 
-struct GameItself: View {
+struct OfLife: View {
     // On initialise notre modèle avec une grille de 20x20
     @StateObject private var game = GameOfLifeModel(rows: 40, cols: 20)
     
@@ -221,5 +221,5 @@ class GameOfLifeModel: ObservableObject {
 
 
 #Preview {
-    GameItself()
+    OfLife()
 }

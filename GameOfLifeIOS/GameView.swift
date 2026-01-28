@@ -13,7 +13,7 @@ import Combine
 struct GameView: View {
     
     @State private var path = NavigationPath()
-    @StateObject private var game = GameOfLifeModel(rows: 25, cols: 50)
+    @StateObject private var game = GameOfLifeModel(rows: 25, cols: 50, initialDensity: 0.2)
     
     // Timer pour l'animation automatique
     @State private var isRunning = false
