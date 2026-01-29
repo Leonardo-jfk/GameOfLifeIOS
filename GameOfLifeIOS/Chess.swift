@@ -570,6 +570,7 @@ struct Chess: View {
                             HStack(spacing: 25) {
                                 // Pièces capturées noires
                                 CapturedPiecesView(pieces: game.capturedBlackPieces, color: .white)
+                            
                                 
                                 // Tour de qui
                                 VStack(spacing: 5) {
@@ -600,7 +601,7 @@ struct Chess: View {
                                 }
                                 
                                 // Pièces capturées blanches
-                                CapturedPiecesView(pieces: game.capturedWhitePieces, color: .white)
+                                CapturedPiecesView(pieces: game.capturedWhitePieces, color: .black)
                             }
                             .padding(.top, 15)
                             
@@ -745,6 +746,7 @@ struct ControlButton: View {
 
 // MARK: - Vue des pièces capturées (modifiée pour s'adapter au rectangle)
 
+// MARK: - Vue des pièces capturées
 struct CapturedPiecesView: View {
     let pieces: [ChessPiece]
     let color: PieceColor
@@ -754,7 +756,7 @@ struct CapturedPiecesView: View {
             Text(color == .white ? "BLANCS" : "NOIRS")
                 .font(.caption)
                 .bold()
-                .foregroundColor(color == .white ? .white : .black)
+                .foregroundColor(.white)
             
             if pieces.isEmpty {
                 Text("Aucune")
@@ -766,7 +768,7 @@ struct CapturedPiecesView: View {
                     ForEach(pieces.prefix(5)) { piece in
                         Text(piece.type.rawValue)
                             .font(.system(size: 16))
-                            .foregroundColor(piece.color == .white ? .white : .black)
+                            .foregroundColor(.white)
                     }
                     
                     if pieces.count > 5 {
@@ -786,7 +788,7 @@ struct CapturedPiecesView: View {
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(color == .white ? Color.white.opacity(0.1) : Color.black.opacity(0.3))
+                .fill(Color.white.opacity(0.1) )
         )
     }
 }
