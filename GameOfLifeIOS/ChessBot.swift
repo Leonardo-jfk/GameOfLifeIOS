@@ -17,6 +17,7 @@ struct ChessBot: View {
     @State private var showWinnerAlert = false
     @State private var winner: PieceColor?
     @State private var showHint = false
+//    @Binding var resetGame = false
     
     var body: some View {
         ZStack {

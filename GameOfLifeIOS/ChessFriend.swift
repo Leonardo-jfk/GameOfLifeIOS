@@ -690,7 +690,7 @@ struct ChessFriend: View {
                         RoundedRectangle(cornerRadius: 15)
                             .stroke(
                                 LinearGradient(
-                                    colors: [.gold, .yellow, .orange],
+                                    colors: [.green, .yellow, .orange],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
