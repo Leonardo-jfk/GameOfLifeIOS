@@ -6,7 +6,10 @@
 //
 //
 
+import Foundation
 import SwiftUI
+import DotLottie
+import Combine
 
 struct ContentView: View {
     @State var showingGame = false
@@ -16,6 +19,7 @@ struct ContentView: View {
     enum GameType: String, Hashable {
         case life
         case chess
+        case chessBot
     }
     
     var body: some View {
@@ -84,7 +88,9 @@ struct ContentView: View {
                 case .life:
                     OfLife()
                 case .chess:
-                    Chess()
+                    ChessFriend()
+                case .chessBot:
+                    ChessBot()
                 }
             }
         }

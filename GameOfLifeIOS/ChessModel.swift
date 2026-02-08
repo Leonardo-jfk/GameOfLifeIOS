@@ -8,6 +8,8 @@
 // MARK: - ChessModel.swift
 import Foundation
 import SwiftUI
+import DotLottie
+import Combine
 
 // MARK: - Types & Enums
 enum PieceType: String, CaseIterable {
