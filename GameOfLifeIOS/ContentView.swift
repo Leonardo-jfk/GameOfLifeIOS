@@ -80,6 +80,27 @@ struct ContentView: View {
                         }
                     }
                     
+                   
+                    // Bouton pour ChessBot
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            path.append(GameType.chessBot)
+                        }
+                    }) {
+                        ZStack(alignment: .center) {
+                            RoundedRectangle(cornerRadius: 30, style: .continuous)
+                                .fill(Color.black.opacity(0.8))
+                                .frame(height: 110)
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 140)
+                            
+                            Text("Chess")
+                                .font(.title3)
+                                .bold()
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    
                     Spacer()
                 }
             }

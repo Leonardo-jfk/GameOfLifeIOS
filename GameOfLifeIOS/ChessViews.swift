@@ -40,7 +40,7 @@ extension Color {
 
 // MARK: - ChessSquareView
 struct ChessSquareView: View {
-    var game: ChessGame
+    @ObservedObject var game: ChessGame
     let row: Int
     let col: Int
     
@@ -96,7 +96,7 @@ struct ChessSquareView: View {
 
 // MARK: - ChessBoardView
 struct ChessBoardView: View {
-    var game: ChessGame
+    @ObservedObject var game: ChessGame
     
     var body: some View {
         VStack(spacing: 0) {
