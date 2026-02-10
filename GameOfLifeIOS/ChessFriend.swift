@@ -704,19 +704,35 @@ struct ChessFriend: View {
             .padding(.vertical)
         }
         .alert("Fin de Partie", isPresented: $showWinnerAlert) {
-            Button("Nouvelle Partie") {
-                game.resetGame()
-            }
-            Button("Menu Principal") {
-                // Retour au menu principal
-            }
-        } message: {
-            if let winner = winner {
-                Text("Les \(winner == .white ? "BLANCS" : "NOIRS") ont gagné !")
-            } else {
-                Text("Match nul !")
-            }
-        }
+                    Button("Nouvelle Partie") {
+                        game.resetGame()
+                        winner = nil
+                    }
+                    Button("Menu Principal") {
+                        // Retour au menu principal
+                    }
+                } message: {
+                    if let winner = winner {
+                        Text("Échec et Mat !\nLes \(winner == .white ? "BLANCS" : "NOIRS") ont gagné !")
+                            .font(.headline)
+                    } else {
+                        Text("Match nul !")
+                    }
+                }
+                .onChange(of: game.capturedWhitePieces) { oldValue, newValue in
+                    // Vérifier si le roi noir a été capturé
+                    if newValue.contains(where: { $0.type == .king }) {
+                        winner = .white
+                        showWinnerAlert = true
+                    }
+                }
+                .onChange(of: game.capturedBlackPieces) { oldValue, newValue in
+                    // Vérifier si le roi blanc a été capturé
+                    if newValue.contains(where: { $0.type == .king }) {
+                        winner = .black
+                        showWinnerAlert = true
+                    }
+                }
     }
 }
 

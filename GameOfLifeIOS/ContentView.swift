@@ -94,7 +94,7 @@ struct ContentView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.horizontal, 140)
                             
-                            Text("Chess")
+                            Text("ChessBot1")
                                 .font(.title3)
                                 .bold()
                                 .foregroundStyle(.white)

@@ -69,7 +69,7 @@ struct ChessSquareView: View {
                                 .stroke(Color.blue, lineWidth: 3)
                         } else if isValidMove {
                             Circle()
-                                .fill(Color.green.opacity(0.5))
+                                .fill(Color.black.opacity(0.4))
                                 .padding(5)
                         }
                     }

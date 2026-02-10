@@ -102,33 +102,33 @@ class ChessGame: ObservableObject {
         validMoves = calculateValidMoves(for: piece)
     }
 
-    func movePiece(to row: Int, col: Int) {
-        guard let selected = selectedPiece else { return }
-        if isValidMove(row: row, col: col) {
-            // Capture si nécessaire
-            if let capturedPiece = board[row][col] {
-                if capturedPiece.color == .white {
-                    capturedWhitePieces.append(capturedPiece)
-                } else {
-                    capturedBlackPieces.append(capturedPiece)
-                }
-            }
-            // Déplacement de la pièce
-            board[selected.position.row][selected.position.col] = nil
-            var newPiece = selected
-            newPiece.position = (row, col)
-            newPiece.hasMoved = true
-            board[row][col] = newPiece
-            // Promotion du pion
-            if newPiece.type == .pawn && (row == 0 || row == 7) {
-                board[row][col]?.type = .queen
-            }
-            // Changement de joueur
-            currentPlayer = (currentPlayer == .white) ? .black : .white
-            selectedPiece = nil
-            validMoves = []
-        }
-    }
+//    func movePiece(to row: Int, col: Int) {
+//        guard let selected = selectedPiece else { return }
+//        if isValidMove(row: row, col: col) {
+//            // Capture si nécessaire
+//            if let capturedPiece = board[row][col] {
+//                if capturedPiece.color == .white {
+//                    capturedWhitePieces.append(capturedPiece)
+//                } else {
+//                    capturedBlackPieces.append(capturedPiece)
+//                }
+//            }
+//            // Déplacement de la pièce
+//            board[selected.position.row][selected.position.col] = nil
+//            var newPiece = selected
+//            newPiece.position = (row, col)
+//            newPiece.hasMoved = true
+//            board[row][col] = newPiece
+//            // Promotion du pion
+//            if newPiece.type == .pawn && (row == 0 || row == 7) {
+//                board[row][col]?.type = .queen
+//            }
+//            // Changement de joueur
+//            currentPlayer = (currentPlayer == .white) ? .black : .white
+//            selectedPiece = nil
+//            validMoves = []
+//        }
+//    }
     
     private func calculateValidMoves(for piece: ChessPiece) -> [(Int, Int)] {
         var moves: [(Int, Int)] = []
@@ -218,7 +218,148 @@ class ChessGame: ObservableObject {
     private func isValidMove(row: Int, col: Int) -> Bool {
         return validMoves.contains { $0.0 == row && $0.1 == col }
     }
-    
+    // MARK: - ChessGame (ajoutez ces méthodes)
+
+    // Ajoutez cette méthode pour trouver le roi d'une couleur
+    private func findKing(of color: PieceColor) -> ChessPiece? {
+        for row in 0..<8 {
+            for col in 0..<8 {
+                if let piece = board[row][col],
+                   piece.type == .king,
+                   piece.color == color {
+                    return piece
+                }
+            }
+        }
+        return nil
+    }
+
+    // Ajoutez cette méthode pour vérifier si une case est attaquée
+    private func isSquareAttacked(row: Int, col: Int, by color: PieceColor) -> Bool {
+        for r in 0..<8 {
+            for c in 0..<8 {
+                if let piece = board[r][c],
+                   piece.color == color {
+                    let moves = calculateValidMoves(for: piece)
+                    if moves.contains(where: { $0.0 == row && $0.1 == col }) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    // Ajoutez cette méthode pour vérifier si le roi est en échec
+    private func isKingInCheck(of color: PieceColor) -> Bool {
+        guard let king = findKing(of: color) else { return false }
+        let opponentColor: PieceColor = (color == .white) ? .black : .white
+        return isSquareAttacked(row: king.position.row, col: king.position.col, by: opponentColor)
+    }
+
+    // Modifiez movePiece pour vérifier l'échec et mat
+    func movePiece(to row: Int, col: Int) {
+        guard let selected = selectedPiece else { return }
+        
+        if isValidMove(row: row, col: col) {
+            // Sauvegarder l'état avant le déplacement (pour annuler si échec)
+            let originalBoard = board
+            let originalSelectedPiece = selectedPiece
+            
+            // Capture si nécessaire
+            var capturedPiece: ChessPiece? = nil
+            if let piece = board[row][col] {
+                capturedPiece = piece
+                if piece.color == .white {
+                    capturedWhitePieces.append(piece)
+                } else {
+                    capturedBlackPieces.append(piece)
+                }
+                
+                // Vérifier si on capture le roi
+                if piece.type == .king {
+                    winner = currentPlayer
+                    showWinnerAlert = true
+                }
+            }
+            
+            // Déplacement de la pièce
+            board[selected.position.row][selected.position.col] = nil
+            var newPiece = selected
+            newPiece.position = (row, col)
+            newPiece.hasMoved = true
+            board[row][col] = newPiece
+            
+            // Promotion du pion
+            if newPiece.type == .pawn && (row == 0 || row == 7) {
+                board[row][col]?.type = .queen
+            }
+            
+            // Vérifier si le joueur se met en échec (mouvement illégal)
+            if isKingInCheck(of: currentPlayer) {
+                // Annuler le mouvement
+                board = originalBoard
+                selectedPiece = originalSelectedPiece
+                if let captured = capturedPiece {
+                    if captured.color == .white {
+                        capturedWhitePieces.removeLast()
+                    } else {
+                        capturedBlackPieces.removeLast()
+                    }
+                }
+                return
+            }
+            
+            // Changement de joueur
+            currentPlayer = (currentPlayer == .white) ? .black : .white
+            
+            // Vérifier échec et mat pour le prochain joueur
+            if isKingInCheck(of: currentPlayer) && !hasAnyValidMove(for: currentPlayer) {
+                winner = (currentPlayer == .white) ? .black : .white
+                showWinnerAlert = true
+            }
+            
+            selectedPiece = nil
+            validMoves = []
+            objectWillChange.send()
+        }
+    }
+
+    // Ajoutez cette méthode pour vérifier s'il reste des mouvements valides
+    private func hasAnyValidMove(for color: PieceColor) -> Bool {
+        for row in 0..<8 {
+            for col in 0..<8 {
+                if let piece = board[row][col],
+                   piece.color == color {
+                    let moves = calculateValidMoves(for: piece)
+                    if !moves.isEmpty {
+                        // Tester chaque mouvement pour voir s'il sort le roi de l'échec
+                        for move in moves {
+                            // Simuler le mouvement
+                            let originalBoard = board
+                            
+                            // Effectuer le mouvement temporaire
+                            board[row][col] = nil
+                            var tempPiece = piece
+                            tempPiece.position = (move.0, move.1)
+                            board[move.0][move.1] = tempPiece
+                            
+                            // Vérifier si le roi n'est plus en échec
+                            let stillInCheck = isKingInCheck(of: color)
+                            
+                            // Restaurer le plateau
+                            board = originalBoard
+                            
+                            if !stillInCheck {
+                                return true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
     // Toutes les autres méthodes restent ici...
     // [Les méthodes selectPiece, movePiece, calculateValidMoves, etc.]
 }
