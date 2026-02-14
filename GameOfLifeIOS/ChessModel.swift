@@ -558,9 +558,7 @@ class ChessGame: ObservableObject {
         }
         return allMoves
     }
-    
-    
-    
+
     
     
     
