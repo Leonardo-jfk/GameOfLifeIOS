@@ -450,9 +450,10 @@ class ChessGame: ObservableObject {
         if isMaximizing {
             var maxEval = -9999
             for move in getAllPossibleMoves(for: .black) { // Le bot joue les Noirs
+                let captured = board[move.to.row][move.to.col]
                 makeTemporaryMove(move)
                 let eval = minimax(depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
-                undoTemporaryMove(move)
+                undoTemporaryMove(move, capturedPiece: captured)
                 maxEval = max(maxEval, eval)
                 currentAlpha = max(currentAlpha, eval)
                 if currentBeta <= currentAlpha { break }
@@ -461,9 +462,10 @@ class ChessGame: ObservableObject {
         } else {
             var minEval = 9999
             for move in getAllPossibleMoves(for: .white) {
+                let captured = board[move.to.row][move.to.col]
                 makeTemporaryMove(move)
                 let eval = minimax(depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
-                undoTemporaryMove(move)
+                undoTemporaryMove(move, capturedPiece: captured)
                 minEval = min(minEval, eval)
                 currentBeta = min(currentBeta, eval)
                 if currentBeta <= currentAlpha { break }
@@ -474,15 +476,16 @@ class ChessGame: ObservableObject {
     
     func makeBotMove() {
         DispatchQueue.global(qos: .userInitiated).async {
-            var bestMove: Move?
+            var bestMove: BotMove?
             var bestValue = -9999
             
             let possibleMoves = self.getAllPossibleMoves(for: .black)
             
             for move in possibleMoves {
+                let captured = self.board[move.to.row][move.to.col]
                 self.makeTemporaryMove(move)
                 let boardValue = self.minimax(depth: 3, isMaximizing: false, alpha: -10000, beta: 10000)
-                self.undoTemporaryMove(move)
+                self.undoTemporaryMove(move, capturedPiece: captured)
                 
                 if boardValue > bestValue {
                     bestValue = boardValue
@@ -498,19 +501,62 @@ class ChessGame: ObservableObject {
         }
     }
     
-    
-    func evaluateBoard() {
-        
-    }
-    func makeTemporaryMove(move) {
-        
-    }
-    func undoTemporaryMove(move) {
-        
+    struct BotMove {
+        let from: (row: Int, col: Int)
+        let to: (row: Int, col: Int)
+        var capturedPiece: ChessPiece? = nil
     }
     
-    func getAllPossibleMoves(color) {
-        
+    func evaluateBoard() -> Int {
+        var totalScore = 0
+            for row in 0..<8 {
+                for col in 0..<8 {
+                    if let piece = board[row][col] {
+                        // Si noir (bot) on ajoute, si blanc (joueur) on soustrait
+                        let value = piece.type.value
+                        totalScore += (piece.color == .black) ? value : -value
+                    }
+                }
+            }
+            return totalScore
+    }
+    
+    // Ces fonctions ne doivent PAS déclencher de mise à jour UI (ne pas appeler objectWillChange)
+    func makeTemporaryMove(_ move: BotMove) {
+        let movingPiece = board[move.from.row][move.from.col]
+        // On mémorise la pièce capturée si on veut faire un undo précis
+        // Note: Dans une version simple, on remplace juste la case
+        board[move.to.row][move.to.col] = movingPiece
+        board[move.from.row][move.from.col] = nil
+        board[move.to.row][move.to.col]?.position = (move.to.row, move.to.col)
+    }
+
+    func undoTemporaryMove(_ move: BotMove, capturedPiece: ChessPiece?) {
+        let movingPiece = board[move.to.row][move.to.col]
+        board[move.from.row][move.from.col] = movingPiece
+        board[move.from.row][move.from.col]?.position = (move.from.row, move.from.col)
+        board[move.to.row][move.to.col] = capturedPiece
+    }
+
+    func executeMove(_ move: BotMove) {
+        // Cette fonction utilise ta logique existante qui met à jour l'UI
+        selectPiece(at: move.from.row, col: move.from.col)
+        movePiece(to: move.to.row, col: move.to.col)
+    }
+    
+    func getAllPossibleMoves(for color: PieceColor) -> [BotMove] {
+        var allMoves: [BotMove] = []
+        for row in 0..<8 {
+            for col in 0..<8 {
+                if let piece = board[row][col], piece.color == color {
+                    let destinations = calculateValidMoves(for: piece)
+                    for dest in destinations {
+                        allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
+                    }
+                }
+            }
+        }
+        return allMoves
     }
     
     

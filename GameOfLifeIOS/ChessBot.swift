@@ -195,6 +195,14 @@ struct ChessBot: View {
                 Text("Match nul !")
             }
         }
+        .onChange(of: game.currentPlayer) { oldValue, newValue in
+            if newValue == .black {
+                // On laisse une petite seconde pour que l'humain voie ce qu'il se passe
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    game.makeBotMove()
+                }
+            }
+        }
     }
 }
 
