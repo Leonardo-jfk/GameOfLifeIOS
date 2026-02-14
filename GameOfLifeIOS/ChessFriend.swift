@@ -399,7 +399,7 @@ struct ChessFriend: View {
                 game.resetGame()
             }
             Button("Menu Principal") {
-                // Retour au menu principal
+                ContentView()
             }
         } message: {
             if let winner = winner {

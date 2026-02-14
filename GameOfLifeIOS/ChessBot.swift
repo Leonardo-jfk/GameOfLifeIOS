@@ -236,12 +236,12 @@ struct ChessBot: View {
                     )
             }
         }
-        .alert("Fin de Partie", isPresented: $showWinnerAlert) {
+        .alert("Fin de Partie", isPresented: $game.gameOver) {
             Button("Nouvelle Partie") {
                 game.resetGame()
             }
             Button("Menu Principal") {
-                // Retour au menu principal
+                ContentView()
             }
         } message: {
             if let winner = winner {
