@@ -394,7 +394,7 @@ struct ChessFriend: View {
                     )
             }
         }
-        .alert("Fin de Partie", isPresented: $showWinnerAlert) {
+        .alert("Fin de Partie", isPresented: $game.gameOver) {
             Button("Nouvelle Partie") {
                 game.resetGame()
             }
@@ -412,7 +412,9 @@ struct ChessFriend: View {
 }
 
 
-
+#Preview {
+    ChessFriend()
+}
 
 
 

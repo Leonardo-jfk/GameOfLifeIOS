@@ -94,17 +94,33 @@ class ChessGame: ObservableObject {
         board[7][7] = ChessPiece(type: .rook, color: .white, position: (7, 7))
     }
     
+//    func selectPiece(at row: Int, col: Int) {
+//        guard let piece = board[row][col], piece.color == currentPlayer else {
+//            // Si on clique sur une case vide ou pièce adverse, on déselectionne
+//            selectedPiece = nil
+//            validMoves = []
+//            return
+//        }
+//        selectedPiece = piece
+//        validMoves = calculateValidMoves(for: piece)
+//    }
+
+    
     func selectPiece(at row: Int, col: Int) {
-        guard let piece = board[row][col], piece.color == currentPlayer else {
-            // Si on clique sur une case vide ou pièce adverse, on déselectionne
+        guard !gameOver else { return } // Empêche toute sélection si le jeu est fini
+        
+        if let piece = board[row][col], piece.color == currentPlayer {
+            selectedPiece = piece
+            validMoves = calculateValidMoves(for: piece)
+        } else {
             selectedPiece = nil
             validMoves = []
-            return
         }
-        selectedPiece = piece
-        validMoves = calculateValidMoves(for: piece)
+        objectWillChange.send()
     }
-
+    
+    
+//    / MARK: - ChessFriend.swift
 //    func movePiece(to row: Int, col: Int) {
 //        guard let selected = selectedPiece else { return }
 //        if isValidMove(row: row, col: col) {
@@ -328,14 +344,13 @@ class ChessGame: ObservableObject {
 //        }
 //    }
     
-    
     func movePiece(to row: Int, col: Int) {
-        guard let selected = selectedPiece else { return }
+        // SÉCURITÉ 1 : Si le jeu est fini, on ne fait rien
+        guard let selected = selectedPiece, !gameOver else { return }
         
         let oldRow = selected.position.row
         let oldCol = selected.position.col
         
-        // Vérifier si on capture une pièce
         if let capturedPiece = board[row][col] {
             if capturedPiece.color == .white {
                 capturedWhitePieces.append(capturedPiece)
@@ -343,15 +358,14 @@ class ChessGame: ObservableObject {
                 capturedBlackPieces.append(capturedPiece)
             }
             
-            // --- AJOUT : Détection de la fin de partie ---
             if capturedPiece.type == .king {
-                print("Le Roi \(capturedPiece.color) a été capturé !")
-                // On pourrait ici appeler une fonction de fin de jeu
-                // gameIsOver = true (si vous ajoutez cette variable)
+                gameOver = true
+                winner = selected.color // Définit le gagnant
+                // On peut s'arrêter ici ou laisser le mouvement se finir visuellement
             }
         }
         
-        // Logique de déplacement existante
+        // Logique de déplacement
         var updatedPiece = selected
         updatedPiece.position = (row, col)
         updatedPiece.hasMoved = true
@@ -361,7 +375,11 @@ class ChessGame: ObservableObject {
         
         selectedPiece = nil
         validMoves = []
-        currentPlayer = (currentPlayer == .white) ? .black : .white
+        
+        // SÉCURITÉ 2 : On ne change de tour que si le jeu continue
+        if !gameOver {
+            currentPlayer = (currentPlayer == .white) ? .black : .white
+        }
         
         objectWillChange.send()
     }

@@ -254,6 +254,9 @@ struct ChessBot: View {
 }
 
 
+#Preview {
+    ChessBot()
+}
 
 
 
