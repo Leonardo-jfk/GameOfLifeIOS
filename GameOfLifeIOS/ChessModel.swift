@@ -439,41 +439,41 @@ class ChessGame: ObservableObject {
     // ICI j'ai tout pour le algorithim
     
     
-    func minimax(depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
-        if depth == 0 || gameOver {
-            return evaluateBoard()
-        }
-        
-        var currentAlpha = alpha
-        var currentBeta = beta
-        
-        if isMaximizing {
-            var maxEval = -9999
-            for move in getAllPossibleMoves(for: .black) { // Le bot joue les Noirs
-                let captured = board[move.to.row][move.to.col]
-                makeTemporaryMove(move)
-                let eval = minimax(depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
-                undoTemporaryMove(move, capturedPiece: captured)
-                maxEval = max(maxEval, eval)
-                currentAlpha = max(currentAlpha, eval)
-                if currentBeta <= currentAlpha { break }
-            }
-            return maxEval
-        } else {
-            var minEval = 9999
-            for move in getAllPossibleMoves(for: .white) {
-                let captured = board[move.to.row][move.to.col]
-                makeTemporaryMove(move)
-                let eval = minimax(depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
-                undoTemporaryMove(move, capturedPiece: captured)
-                minEval = min(minEval, eval)
-                currentBeta = min(currentBeta, eval)
-                if currentBeta <= currentAlpha { break }
-            }
-            return minEval
-        }
-    }
-    
+//    func minimax(depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
+//        if depth == 0 || gameOver {
+//            return evaluateBoard()
+//        }
+//        
+//        var currentAlpha = alpha
+//        var currentBeta = beta
+//        
+//        if isMaximizing {
+//            var maxEval = -9999
+//            for move in getAllPossibleMoves(for: .black) { // Le bot joue les Noirs
+//                let captured = board[move.to.row][move.to.col]
+//                makeTemporaryMove(move)
+//                let eval = minimax(depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
+//                undoTemporaryMove(move, capturedPiece: captured)
+//                maxEval = max(maxEval, eval)
+//                currentAlpha = max(currentAlpha, eval)
+//                if currentBeta <= currentAlpha { break }
+//            }
+//            return maxEval
+//        } else {
+//            var minEval = 9999
+//            for move in getAllPossibleMoves(for: .white) {
+//                let captured = board[move.to.row][move.to.col]
+//                makeTemporaryMove(move)
+//                let eval = minimax(depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
+//                undoTemporaryMove(move, capturedPiece: captured)
+//                minEval = min(minEval, eval)
+//                currentBeta = min(currentBeta, eval)
+//                if currentBeta <= currentAlpha { break }
+//            }
+//            return minEval
+//        }
+//    }
+//    
 //    func makeBotMove() {
 //        DispatchQueue.global(qos: .userInitiated).async {
 //            var bestMove: BotMove?
@@ -500,29 +500,131 @@ class ChessGame: ObservableObject {
 //            }
 //        }
 //    }
+//    
+//    func makeBotMove() {
+//        // 1. Créer une copie du board pour les calculs
+//        let workingBoard = board  // Copie le board actuel
+//        
+//        DispatchQueue.global.async {
+//            var bestMove: BotMove?
+//            var bestValue = -9999
+//            
+//            // 2. Travailler sur la copie, pas sur le vrai board
+//            for move in possibleMoves {
+//                let newBoard = self.simulateMove(on: workingBoard, move: move)
+//                let value = self.evaluateBoard(newBoard)
+//                let captured = self.board[move.to.row][move.to.col]
+//                                self.makeTemporaryMove(move)
+//                                let boardValue = self.minimax(depth: 2, isMaximizing: false, alpha: -10000, beta: 10000)
+//                                self.undoTemporaryMove(move, capturedPiece: captured)
+//            }
+//            
+//            DispatchQueue.main.async {
+//                // 3. Une seule modification du vrai board
+//                if let move = bestMove {
+//                    self.executeMove(move)  // RAFRAÎCHIT une seule fois
+//                }
+//            }
+//        }
+//    }
     
-    func makeBotMove() {
-        // 1. Créer une copie du board pour les calculs
-        let workingBoard = board  // Copie le board actuel
+    
+    
+    
+    
+    // MARK: - Algorithme Minimax (Corrigé)
+    // On ajoute le paramètre 'currentBoard' pour ne pas utiliser la variable @Published
+    func minimax(boardState: [[ChessPiece?]], depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
+        if depth == 0 || gameOver {
+            return evaluateBoard(boardState) // On évalue l'état simulé
+        }
         
-        DispatchQueue.global.async {
-            var bestMove: BotMove?
-            var bestValue = -9999
+        var currentAlpha = alpha
+        var currentBeta = beta
+        var tempBoard = boardState // On travaille sur une copie locale
+        
+        if isMaximizing {
+            var maxEval = -10000
+            let moves = getAllPossibleMoves(for: .black, on: tempBoard)
             
-            // 2. Travailler sur la copie, pas sur le vrai board
+            for move in moves {
+                let captured = tempBoard[move.to.row][move.to.col]
+                
+                // Simulation locale
+                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+                tempBoard[move.from.row][move.from.col] = nil
+                
+                let eval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
+                
+                // Annulation locale
+                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+                tempBoard[move.to.row][move.to.col] = captured
+                
+                maxEval = max(maxEval, eval)
+                currentAlpha = max(currentAlpha, eval)
+                if currentBeta <= currentAlpha { break }
+            }
+            return maxEval
+        } else {
+            var minEval = 10000
+            let moves = getAllPossibleMoves(for: .white, on: tempBoard)
+            
+            for move in moves {
+                let captured = tempBoard[move.to.row][move.to.col]
+                
+                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+                tempBoard[move.from.row][move.from.col] = nil
+                
+                let eval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
+                
+                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+                tempBoard[move.to.row][move.to.col] = captured
+                
+                minEval = min(minEval, eval)
+                currentBeta = min(currentBeta, eval)
+                if currentBeta <= currentAlpha { break }
+            }
+            return minEval
+        }
+    }
+
+    func makeBotMove() {
+        // 1. On capture l'état actuel du board sur le thread principal
+        let currentBoardSnapshot = self.board
+        
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            
+            var bestMove: BotMove?
+            var bestValue = -10000
+            
+            // On travaille sur notre snapshot
+            let possibleMoves = self.getAllPossibleMoves(for: .black, on: currentBoardSnapshot)
+            var tempBoard = currentBoardSnapshot
+            
             for move in possibleMoves {
-                let newBoard = self.simulateMove(on: workingBoard, move: move)
-                let value = self.evaluateBoard(newBoard)
-                let captured = self.board[move.to.row][move.to.col]
-                                self.makeTemporaryMove(move)
-                                let boardValue = self.minimax(depth: 2, isMaximizing: false, alpha: -10000, beta: 10000)
-                                self.undoTemporaryMove(move, capturedPiece: captured)
+                let captured = tempBoard[move.to.row][move.to.col]
+                
+                // Faire le coup
+                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+                tempBoard[move.from.row][move.from.col] = nil
+                
+                let boardValue = self.minimax(boardState: tempBoard, depth: 2, isMaximizing: false, alpha: -10000, beta: 10000)
+                
+                // Annuler le coup
+                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+                tempBoard[move.to.row][move.to.col] = captured
+                
+                if boardValue > bestValue {
+                    bestValue = boardValue
+                    bestMove = move
+                }
             }
             
+            // 2. On revient sur le Main Thread UNIQUEMENT pour le coup final
             DispatchQueue.main.async {
-                // 3. Une seule modification du vrai board
                 if let move = bestMove {
-                    self.executeMove(move)  // RAFRAÎCHIT une seule fois
+                    self.executeMove(move)
                 }
             }
         }
@@ -541,18 +643,31 @@ class ChessGame: ObservableObject {
         var capturedPiece: ChessPiece? = nil
     }
     
-    func evaluateBoard() -> Int {
+//    func evaluateBoard() -> Int {
+//        var totalScore = 0
+//            for row in 0..<8 {
+//                for col in 0..<8 {
+//                    if let piece = board[row][col] {
+//                        // Si noir (bot) on ajoute, si blanc (joueur) on soustrait
+//                        let value = piece.type.value
+//                        totalScore += (piece.color == .black) ? value : -value
+//                    }
+//                }
+//            }
+//            return totalScore
+//    }
+    
+    func evaluateBoard(_ boardToEvaluate: [[ChessPiece?]]) -> Int {
         var totalScore = 0
-            for row in 0..<8 {
-                for col in 0..<8 {
-                    if let piece = board[row][col] {
-                        // Si noir (bot) on ajoute, si blanc (joueur) on soustrait
-                        let value = piece.type.value
-                        totalScore += (piece.color == .black) ? value : -value
-                    }
+        for row in 0..<8 {
+            for col in 0..<8 {
+                if let piece = boardToEvaluate[row][col] {
+                    let value = piece.type.value
+                    totalScore += (piece.color == .black) ? value : -value
                 }
             }
-            return totalScore
+        }
+        return totalScore
     }
     
     // Ces fonctions ne doivent PAS déclencher de mise à jour UI (ne pas appeler objectWillChange)
@@ -603,13 +718,30 @@ class ChessGame: ObservableObject {
         movePiece(to: move.to.row, col: move.to.col)
     }
     
-    private func getAllPossibleMoves(for color: PieceColor) -> [BotMove] {
+//    private func getAllPossibleMoves(for color: PieceColor) -> [BotMove] {
+//        var allMoves: [BotMove] = []
+//        for row in 0..<8 {
+//            for col in 0..<8 {
+//                if let piece = board[row][col], piece.color == color {
+//                    let destinations = calculateValidMoves(for: piece)
+//                    for dest in destinations {
+//                        allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
+//                    }
+//                }
+//            }
+//        }
+//        return allMoves
+//    }
+    private func getAllPossibleMoves(for color: PieceColor, on targetBoard: [[ChessPiece?]]) -> [BotMove] {
         var allMoves: [BotMove] = []
         for row in 0..<8 {
             for col in 0..<8 {
-                if let piece = board[row][col], piece.color == color {
+                if let piece = targetBoard[row][col], piece.color == color {
+                    // Ici, assure-toi que calculateValidMoves peut aussi prendre un board en paramètre
+                    // Si ce n'est pas le cas, tu peux utiliser ta version actuelle mais attention aux bugs
                     let destinations = calculateValidMoves(for: piece)
                     for dest in destinations {
+                        allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
                         allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
                     }
                 }
