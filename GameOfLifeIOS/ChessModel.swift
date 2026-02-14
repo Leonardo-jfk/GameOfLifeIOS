@@ -45,6 +45,9 @@ class ChessGame: ObservableObject {
     @Published var capturedWhitePieces: [ChessPiece] = []
     @Published var capturedBlackPieces: [ChessPiece] = []
     
+    @Published var gameOver = false
+    @Published var winner: PieceColor? = nil
+    
     init() {
         setupBoard()
     }
@@ -258,71 +261,109 @@ class ChessGame: ObservableObject {
     }
 
     // Modifiez movePiece pour vérifier l'échec et mat
+//    func movePiece(to row: Int, col: Int) {
+//        guard let selected = selectedPiece else { return }
+//        
+//        if isValidMove(row: row, col: col) {
+//            // Sauvegarder l'état avant le déplacement (pour annuler si échec)
+//            let originalBoard = board
+//            let originalSelectedPiece = selectedPiece
+//            
+//            // Capture si nécessaire
+//            var capturedPiece: ChessPiece? = nil
+//            if let piece = board[row][col] {
+//                capturedPiece = piece
+//                if piece.color == .white {
+//                    capturedWhitePieces.append(piece)
+//                } else {
+//                    capturedBlackPieces.append(piece)
+//                }
+//                
+//                // Vérifier si on capture le roi
+//                if piece.type == .king {
+//                    winner = currentPlayer
+//                    showWinnerAlert = true
+//                }
+//            }
+//            
+//            // Déplacement de la pièce
+//            board[selected.position.row][selected.position.col] = nil
+//            var newPiece = selected
+//            newPiece.position = (row, col)
+//            newPiece.hasMoved = true
+//            board[row][col] = newPiece
+//            
+//            // Promotion du pion
+//            if newPiece.type == .pawn && (row == 0 || row == 7) {
+//                board[row][col]?.type = .queen
+//            }
+//            
+//            // Vérifier si le joueur se met en échec (mouvement illégal)
+//            if isKingInCheck(of: currentPlayer) {
+//                // Annuler le mouvement
+//                board = originalBoard
+//                selectedPiece = originalSelectedPiece
+//                if let captured = capturedPiece {
+//                    if captured.color == .white {
+//                        capturedWhitePieces.removeLast()
+//                    } else {
+//                        capturedBlackPieces.removeLast()
+//                    }
+//                }
+//                return
+//            }
+//            
+//            // Changement de joueur
+//            currentPlayer = (currentPlayer == .white) ? .black : .white
+//            
+//            // Vérifier échec et mat pour le prochain joueur
+//            if isKingInCheck(of: currentPlayer) && !hasAnyValidMove(for: currentPlayer) {
+//                winner = (currentPlayer == .white) ? .black : .white
+//                showWinnerAlert = true
+//            }
+//            
+//            selectedPiece = nil
+//            validMoves = []
+//            objectWillChange.send()
+//        }
+//    }
+    
+    
     func movePiece(to row: Int, col: Int) {
         guard let selected = selectedPiece else { return }
         
-        if isValidMove(row: row, col: col) {
-            // Sauvegarder l'état avant le déplacement (pour annuler si échec)
-            let originalBoard = board
-            let originalSelectedPiece = selectedPiece
-            
-            // Capture si nécessaire
-            var capturedPiece: ChessPiece? = nil
-            if let piece = board[row][col] {
-                capturedPiece = piece
-                if piece.color == .white {
-                    capturedWhitePieces.append(piece)
-                } else {
-                    capturedBlackPieces.append(piece)
-                }
-                
-                // Vérifier si on capture le roi
-                if piece.type == .king {
-                    winner = currentPlayer
-                    showWinnerAlert = true
-                }
+        let oldRow = selected.position.row
+        let oldCol = selected.position.col
+        
+        // Vérifier si on capture une pièce
+        if let capturedPiece = board[row][col] {
+            if capturedPiece.color == .white {
+                capturedWhitePieces.append(capturedPiece)
+            } else {
+                capturedBlackPieces.append(capturedPiece)
             }
             
-            // Déplacement de la pièce
-            board[selected.position.row][selected.position.col] = nil
-            var newPiece = selected
-            newPiece.position = (row, col)
-            newPiece.hasMoved = true
-            board[row][col] = newPiece
-            
-            // Promotion du pion
-            if newPiece.type == .pawn && (row == 0 || row == 7) {
-                board[row][col]?.type = .queen
+            // --- AJOUT : Détection de la fin de partie ---
+            if capturedPiece.type == .king {
+                print("Le Roi \(capturedPiece.color) a été capturé !")
+                // On pourrait ici appeler une fonction de fin de jeu
+                // gameIsOver = true (si vous ajoutez cette variable)
             }
-            
-            // Vérifier si le joueur se met en échec (mouvement illégal)
-            if isKingInCheck(of: currentPlayer) {
-                // Annuler le mouvement
-                board = originalBoard
-                selectedPiece = originalSelectedPiece
-                if let captured = capturedPiece {
-                    if captured.color == .white {
-                        capturedWhitePieces.removeLast()
-                    } else {
-                        capturedBlackPieces.removeLast()
-                    }
-                }
-                return
-            }
-            
-            // Changement de joueur
-            currentPlayer = (currentPlayer == .white) ? .black : .white
-            
-            // Vérifier échec et mat pour le prochain joueur
-            if isKingInCheck(of: currentPlayer) && !hasAnyValidMove(for: currentPlayer) {
-                winner = (currentPlayer == .white) ? .black : .white
-                showWinnerAlert = true
-            }
-            
-            selectedPiece = nil
-            validMoves = []
-            objectWillChange.send()
         }
+        
+        // Logique de déplacement existante
+        var updatedPiece = selected
+        updatedPiece.position = (row, col)
+        updatedPiece.hasMoved = true
+        
+        board[row][col] = updatedPiece
+        board[oldRow][oldCol] = nil
+        
+        selectedPiece = nil
+        validMoves = []
+        currentPlayer = (currentPlayer == .white) ? .black : .white
+        
+        objectWillChange.send()
     }
 
     // Ajoutez cette méthode pour vérifier s'il reste des mouvements valides

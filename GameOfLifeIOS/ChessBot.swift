@@ -12,12 +12,17 @@ import SwiftUI
 import DotLottie
 import Combine
 
+//@Published var gameOver = false
+//@Published var winner: PieceColor? = nil
+
 struct ChessBot: View {
     @StateObject private var game = ChessGame()
     @State private var showWinnerAlert = false
     @State private var winner: PieceColor?
     @State private var showHint = false
 //    @Binding var resetGame = false
+    
+  
     
     var body: some View {
         ZStack {
