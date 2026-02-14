@@ -112,49 +112,123 @@ struct ChessBoardView: View {
 }
 
 // MARK: - CapturedPiecesView
+//struct CapturedPiecesView: View {
+//    let pieces: [ChessPiece]
+//    let color: PieceColor
+//    
+//    var body: some View {
+////        VStack(alignment: .center, spacing: 5) {
+////            Text(color == .white ? "BLANCS" : "NOIRS")
+////                .font(.caption)
+////                .bold()
+////                .foregroundColor(.white)
+////            
+////            if pieces.isEmpty {
+////                Text("Aucune")
+////                    .font(.caption2)
+////                    .foregroundColor(.gray)
+////                    .frame(width: 80, height: 20)
+////            } else {
+////                HStack(spacing: 2) {
+////                    ForEach(pieces.prefix(5)) { piece in
+////                        Text(piece.type.rawValue)
+////                            .font(.system(size: 16))
+////                            .foregroundColor(.white)
+////                    }
+////                    
+////                    if pieces.count > 5 {
+////                        Text("+\(pieces.count - 5)")
+////                            .font(.caption2)
+////                            .foregroundColor(.gray)
+////                    }
+////                }
+////                .frame(width: 80, height: 20)
+////            }
+////            
+////            Text("\(pieces.count) captures")
+////                .font(.caption2)
+////                .foregroundColor(.gray)
+////        }
+////        .frame(width: 90)
+////        .padding(8)
+////        .background(
+////            RoundedRectangle(cornerRadius: 10)
+////                .fill(Color.white.opacity(0.1))
+////        )
+//
+//    }
+//}
+
+
 struct CapturedPiecesView: View {
-    let pieces: [ChessPiece]
-    let color: PieceColor
+    // On passe directement les comptes au lieu de passer tout l'objet game
+    let blackCapturedCount: Int
+    let whiteCapturedCount: Int
     
     var body: some View {
-        VStack(alignment: .center, spacing: 5) {
-            Text(color == .white ? "BLANCS" : "NOIRS")
+        VStack(spacing: 5) {
+            Text("CAPTURES")
                 .font(.caption)
-                .bold()
-                .foregroundColor(.white)
+                .foregroundColor(.gray)
             
-            if pieces.isEmpty {
-                Text("Aucune")
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-                    .frame(width: 80, height: 20)
-            } else {
-                HStack(spacing: 2) {
-                    ForEach(pieces.prefix(5)) { piece in
-                        Text(piece.type.rawValue)
-                            .font(.system(size: 16))
+            HStack(spacing: 15) {
+                // Score pour les Blancs (combien de pièces noires ils ont pris)
+                Text("⚪ \(blackCapturedCount)")
+                    .font(.title3)
+                    .bold()
+                    .foregroundColor(.white)
+                
+                // Score pour les Noirs (combien de pièces blanches ils ont pris)
+                Text("⚫ \(whiteCapturedCount)")
+                    .font(.title3)
+                    .bold()
+                    .foregroundColor(.white)
+            }
+        }
+        .padding()
+        .background(Color.black.opacity(0.5))
+        .cornerRadius(10)
+    }
+}
+
+
+
+// MARK: - StyledBoardView (Le design centralisé)
+struct StyledBoardView: View {
+    @ObservedObject var game: ChessGame
+    let gradientColors: [Color] // On permet de changer les couleurs selon le mode
+    
+    var body: some View {
+        VStack {
+            ChessBoardView(game: game)
+                .padding(5)
+                .background(Color.black.opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(
+                            LinearGradient(
+                                colors: gradientColors,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 10
+                        )
+                )
+                .shadow(color: gradientColors.first?.opacity(0.3) ?? .clear, radius: 20)
+                .overlay(alignment: .bottomLeading) {
+                    if let selected = game.selectedPiece {
+                        Text("Sélection : \(selected.type.rawValue)")
+                            .font(.caption)
+                            .bold()
                             .foregroundColor(.white)
-                    }
-                    
-                    if pieces.count > 5 {
-                        Text("+\(pieces.count - 5)")
-                            .font(.caption2)
-                            .foregroundColor(.gray)
+                            .padding(8)
+                            .background(Color.black.opacity(0.7))
+                            .cornerRadius(10)
+                            .padding(15)
                     }
                 }
-                .frame(width: 80, height: 20)
-            }
-            
-            Text("\(pieces.count) captures")
-                .font(.caption2)
-                .foregroundColor(.gray)
         }
-        .frame(width: 90)
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white.opacity(0.1))
-        )
     }
 }
 
