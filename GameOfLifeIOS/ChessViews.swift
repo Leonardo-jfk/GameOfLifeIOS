@@ -61,7 +61,8 @@ struct ChessSquareView: View {
         ZStack {
             // Fond de la case
             Rectangle()
-                .fill(isLightSquare ? Color(hex: "#F0D9B5") : Color(hex: "#B58863"))
+                .fill(isLightSquare ? Color.gray.opacity(1) : Color.gray.opacity(0.4))
+//                .fill(isLightSquare ? Color(hex: "#F0D9B5") : Color(hex: "#B58863"))
                 .overlay(
                     Group {
                         if isSelected {

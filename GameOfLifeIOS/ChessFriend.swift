@@ -218,31 +218,6 @@ struct ChessFriend: View {
                     .cornerRadius(10)
                     
                     Spacer()
-                    
-                    // Contador de movimientos (nueva característica)
-//                    VStack(spacing: 5) {
-//                        Text("CAPTURES")
-//                            .font(.caption)
-//                            .foregroundColor(.gray)
-//                        
-//                        HStack(spacing: 15) {
-//                            Text("⚪ \(game.capturedBlackPieces.count)")
-//                                .font(.title3)
-//                                .bold()
-//                                .foregroundColor(.white)
-//                            
-//                            Text("⚫ \(game.capturedWhitePieces.count)")
-//                                .font(.title3)
-//                                .bold()
-//                                .foregroundColor(.white)
-//                        }
-//                    }
-//                    .padding()
-//                    .background(Color.black.opacity(0.5))
-//                    .cornerRadius(10)
-                    
-                    
-                    
                     CapturedPiecesView(
                         blackCapturedCount: game.capturedBlackPieces.count,
                         whiteCapturedCount: game.capturedWhitePieces.count
@@ -252,92 +227,7 @@ struct ChessFriend: View {
                 .padding(.horizontal, 20)
                 
                 Spacer()
-                
-                // Échiquier con BORDES DIFERENTES
-//                ZStack {
-                    //                    ChessBoardView(game: game)
-                    //                        .frame( maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    //                        .padding(.horizontal, 20)
-                    //                        .padding(.vertical, 20)
-                    //
-                    //                    // Indicador de pieza seleccionada (nuevo)
-                    //                    if let selected = game.selectedPiece {
-                    //                        VStack {
-                    //                            Spacer()
-                    //                            HStack {
-                    //                                Text("Pieza seleccionada: \(selected.type.rawValue)")
-                    //                                    .font(.caption)
-                    //                                    .foregroundColor(.white)
-                    //                                    .padding(5)
-                    //                                    .background(Color.black.opacity(0.7))
-                    //                                    .cornerRadius(5)
-                    //                                Spacer()
-                    //                            }
-                    //                            .padding(.leading, 10)
-                    //                        }
-                    ////                        .frame(width: 350, height: 350)
-                    //                        .frame( maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    //                        .padding(.horizontal, 20)
-                    //                        .padding(.vertical, 20)
-                    //                    }
-                    //                }
-                    //                .background(
-                    //                    RoundedRectangle(cornerRadius: 25)
-                    //                        .fill(Color.black.opacity(0.3))
-                    //                        .shadow(color: .gray, radius: 10)
-                    //                        .frame( maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    //                        .padding(.horizontal, 20)
-                    //                        .padding(.vertical, 20)
-                    //                )
-                    //                .overlay(
-                    //                    RoundedRectangle(cornerRadius: 25)
-                    //                        .stroke(
-                    //                            LinearGradient(
-                    //                                colors: [.purple, .blue, .cyan],
-                    //                                startPoint: .topLeading,
-                    //                                endPoint: .bottomTrailing
-                    //                            ),
-                    //                            lineWidth: 6
-                    //                        )
-                    //                )
-                    
-                    
-                    // Échiquier avec sa bordure précise
-//                    VStack {
-//                        ChessBoardView(game: game)
-//                            .padding(5) // Espacement entre les cases et la bordure
-//                            .background(Color.black.opacity(0.3))
-//                            .clipShape(RoundedRectangle(cornerRadius: 20)) // Coupe le fond
-//                            .overlay(
-//                                // La bordure qui suit exactement le clipShape
-//                                RoundedRectangle(cornerRadius: 20)
-//                                    .stroke(
-//                                        LinearGradient(
-//                                            colors: [.purple, .blue, .cyan],
-//                                            startPoint: .topLeading,
-//                                            endPoint: .bottomTrailing
-//                                        ),
-//                                        lineWidth: 10
-//                                    )
-//                            )
-//                            .shadow(color: .purple.opacity(0.3), radius: 20)
-//                            // Ajout de l'indicateur de pièce sélectionnée par-dessus
-//                            .overlay(alignment: .bottomLeading) {
-//                                if let selected = game.selectedPiece {
-//                                    Text("Sélection : \(selected.type.rawValue)")
-//                                        .font(.caption)
-//                                        .bold()
-//                                        .foregroundColor(.white)
-//                                        .padding(8)
-//                                        .background(Color.black.opacity(0.7))
-//                                        .cornerRadius(10)
-//                                        .padding(15) // Décalage par rapport au bord interne
-//                                }
-//                            }
-//                    }
-//                    .padding(.horizontal, 20) // Marge extérieure par rapport à l'écran
-//                    
-//                }
+               
                 // Plus besoin de tout le ZStack complexe, juste ceci :
                 StyledBoardView(game: game, gradientColors: [.purple, .blue, .cyan])
                     .padding(.horizontal, 20)

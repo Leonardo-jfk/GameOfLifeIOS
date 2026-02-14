@@ -60,30 +60,6 @@ struct ChessBot: View {
                     .cornerRadius(10)
                     
                     Spacer()
-                    
-                    // Contador de movimientos (nueva característica)
-//                    VStack(spacing: 5) {
-//                        Text("CAPTURES")
-//                            .font(.caption)
-//                            .foregroundColor(.gray)
-//                        
-//                        HStack(spacing: 15) {
-//                            Text("⚪ \(game.capturedBlackPieces.count)")
-//                                .font(.title3)
-//                                .bold()
-//                                .foregroundColor(.white)
-//                            
-//                            Text("⚫ \(game.capturedWhitePieces.count)")
-//                                .font(.title3)
-//                                .bold()
-//                                .foregroundColor(.white)
-//                        }
-//                    }
-//                    .padding()
-//                    .background(Color.black.opacity(0.5))
-//                    .cornerRadius(10)
-                    
-                    
                     CapturedPiecesView(
                         blackCapturedCount: game.capturedBlackPieces.count,
                         whiteCapturedCount: game.capturedWhitePieces.count
@@ -93,47 +69,6 @@ struct ChessBot: View {
                 .padding(.horizontal, 20)
                 
                 Spacer()
-                
-                // Échiquier con BORDES DIFERENTES
-//                ZStack {
-//                    ChessBoardView(game: game)
-//                        .frame(width: 350, height: 350)
-//                    
-//                    // Indicador de pieza seleccionada (nuevo)
-//                    if let selected = game.selectedPiece {
-//                        VStack {
-//                            Spacer()
-//                            HStack {
-//                                Text("Pieza seleccionada: \(selected.type.rawValue)")
-//                                    .font(.caption)
-//                                    .foregroundColor(.white)
-//                                    .padding(5)
-//                                    .background(Color.black.opacity(0.7))
-//                                    .cornerRadius(5)
-//                                Spacer()
-//                            }
-//                            .padding(.leading, 10)
-//                        }
-//                        .frame(width: 350, height: 350)
-//                    }
-//                }
-//                .background(
-//                    RoundedRectangle(cornerRadius: 20)
-//                        .fill(Color.black.opacity(0.3))
-//                        .shadow(color: .purple, radius: 10)
-//                )
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 20)
-//                        .stroke(
-//                            LinearGradient(
-//                                colors: [.purple, .blue, .cyan],
-//                                startPoint: .topLeading,
-//                                endPoint: .bottomTrailing
-//                            ),
-//                            lineWidth: 3
-//                        )
-//                )
-//
                 // Plus besoin de tout le ZStack complexe, juste ceci :
                 StyledBoardView(game: game, gradientColors: [.purple, .blue, .cyan])
                     .padding(.horizontal, 20)
