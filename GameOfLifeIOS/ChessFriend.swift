@@ -316,6 +316,7 @@ struct ChessFriend: View {
                     .ignoresSafeArea()
                     .overlay(
                         VStack {
+                            //call the algorithim, so whites or blacks are played to get the best move
                             Text("💡 Consejo de Juego")
                                 .font(.title2)
                                 .foregroundColor(.yellow)

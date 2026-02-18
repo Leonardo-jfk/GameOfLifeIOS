@@ -534,7 +534,14 @@ class ChessGame: ObservableObject {
     
     // MARK: - Algorithme Minimax (Corrigé)
     // On ajoute le paramètre 'currentBoard' pour ne pas utiliser la variable @Published
+    var transpositionTable: [String: (score: Int, depth: Int)] = [:]
+    
     func minimax(boardState: [[ChessPiece?]], depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
+        let boardKey = generateHash(for: boardState)
+        if let cached = transpositionTable[boardKey], cached.depth >= depth {
+                return cached.score
+            }
+        
         if depth == 0 || gameOver {
             return evaluateBoard(boardState) // On évalue l'état simulé
         }
@@ -542,6 +549,8 @@ class ChessGame: ObservableObject {
         var currentAlpha = alpha
         var currentBeta = beta
         var tempBoard = boardState // On travaille sur une copie locale
+        
+        let finalEval: Int
         
         if isMaximizing {
             var maxEval = -10000
@@ -554,17 +563,17 @@ class ChessGame: ObservableObject {
                 tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
                 tempBoard[move.from.row][move.from.col] = nil
                 
-                let eval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
+                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
                 
                 // Annulation locale
                 tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
                 tempBoard[move.to.row][move.to.col] = captured
                 
-                maxEval = max(maxEval, eval)
-                currentAlpha = max(currentAlpha, eval)
+                maxEval = max(maxEval, currentMoveEval)
+                currentAlpha = max(currentAlpha, currentMoveEval)
                 if currentBeta <= currentAlpha { break }
             }
-            return maxEval
+            finalEval = maxEval
         } else {
             var minEval = 10000
             let moves = getAllPossibleMoves(for: .white, on: tempBoard)
@@ -575,17 +584,23 @@ class ChessGame: ObservableObject {
                 tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
                 tempBoard[move.from.row][move.from.col] = nil
                 
-                let eval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
+                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
                 
                 tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
                 tempBoard[move.to.row][move.to.col] = captured
                 
-                minEval = min(minEval, eval)
-                currentBeta = min(currentBeta, eval)
+                minEval = min(minEval, currentMoveEval)
+                currentBeta = min(currentBeta, currentMoveEval)
                 if currentBeta <= currentAlpha { break }
             }
-            return minEval
+            finalEval =  minEval
         }
+        
+        if transpositionTable.count > 100_000 { // Limite arbitraire
+            transpositionTable.removeAll(keepingCapacity: true)
+        }
+        transpositionTable[boardKey] = (score: finalEval, depth: depth)
+            return finalEval
     }
 
     func makeBotMove() {
@@ -609,7 +624,7 @@ class ChessGame: ObservableObject {
                 tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
                 tempBoard[move.from.row][move.from.col] = nil
                 
-                let boardValue = self.minimax(boardState: tempBoard, depth: 2, isMaximizing: false, alpha: -10000, beta: 10000)
+                let boardValue = self.minimax(boardState: tempBoard, depth: 5, isMaximizing: false, alpha: -10000, beta: 10000)
                 
                 // Annuler le coup
                 tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
@@ -742,7 +757,7 @@ class ChessGame: ObservableObject {
                     let destinations = calculateValidMoves(for: piece)
                     for dest in destinations {
                         allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
-                        allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
+//                        allMoves.append(BotMove(from: (row, col), to: (dest.0, dest.1)))
                     }
                 }
             }
@@ -751,7 +766,23 @@ class ChessGame: ObservableObject {
     }
 
     
-    
+    func generateHash(for board: [[ChessPiece?]]) -> String {
+        var hash = ""
+        for row in board {
+            for slot in row {
+                if let piece = slot {
+                    // On utilise une lettre pour la couleur et une pour le type
+                    // Ex: "BK" pour Black King, "WP" pour White Pawn
+                    let colorChar = (piece.color == .black) ? "B" : "W"
+                    let typeChar = String(describing: piece.type).prefix(1).uppercased()
+                    hash += colorChar + typeChar
+                } else {
+                    hash += "." // Case vide
+                }
+            }
+        }
+        return hash
+    }
     
     
     
