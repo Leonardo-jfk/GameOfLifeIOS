@@ -189,8 +189,20 @@ struct ChessBot: View {
                 dismiss()
             }
         } message: {
-            if let winner = winner {
-                Text("Les \(winner == .white ? "BLANCS" : "NOIRS") ont gagné !")
+            if let reason = game.gameEndReason {
+                switch reason {
+                case .checkmate(let winnerColor):
+                    Text("Les \(winnerColor == .white ? "BLANCS" : "NOIRS") ont gagné par échec et mat !")
+                case .stalemate:
+                    Text("Pat ! Match nul.")
+                case .insufficientMaterial:
+                    Text("Matériel insuffisant ! Match nul.")
+                case .resignation:
+                    Text("Abandon")
+                }
+            } else if let winnerDetected = game.winner {
+                // Fallback pour l'ancien système
+                Text("Les \(winnerDetected == .white ? "BLANCS" : "NOIRS") ont gagné !")
             } else {
                 Text("Match nul !")
             }

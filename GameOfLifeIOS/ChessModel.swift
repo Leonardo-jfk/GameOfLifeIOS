@@ -292,6 +292,9 @@ class ChessGame: ObservableObject {
         
         let oldRow = selected.position.row
         let oldCol = selected.position.col
+                
+                // SAUVEGARDE AVANT LE MOUVEMENT
+                saveState()
         
 //        if let capturedPiece = board[row][col] {
 //            if capturedPiece.color == .white {
@@ -339,6 +342,7 @@ class ChessGame: ObservableObject {
         // SÉCURITÉ 2 : On ne change de tour que si le jeu continue
         if !gameOver {
             currentPlayer = (currentPlayer == .white) ? .black : .white
+            checkGameState()
         }
         
         objectWillChange.send()
@@ -415,6 +419,47 @@ class ChessGame: ObservableObject {
         guard let piece = board[row][col], piece.type == .queen else { return false }
         return isQueenInCheck(of: piece.color)
     }
+    
+    
+    
+    // Pile pour stocker l'historique des plateaux
+         var boardHistory: [[[ChessPiece?]]] = []
+        
+        // Appelez cette méthode au DEBUT de movePiece() pour sauvegarder l'état actuel
+        func saveState() {
+            boardHistory.append(self.board)
+            // Limiter l'historique si nécessaire (ex: 20 derniers coups)
+            if boardHistory.count > 20 { boardHistory.removeFirst() }
+        }
+        
+    func undoMove() {
+        // Vérifier s'il y a quelque chose à annuler
+        guard !boardHistory.isEmpty else {
+            print("Historique vide")
+            return
+        }
+        
+        // Récupérer le dernier état
+        let previousBoard = boardHistory.removeLast()
+        
+        // Restaurer l'état
+        self.board = previousBoard
+        
+        // Inverser le tour
+        self.currentPlayer = (currentPlayer == .white) ? .black : .white
+        
+        // Réinitialiser les indicateurs de sélection et de fin de jeu
+        self.selectedPiece = nil
+        self.validMoves = []
+        self.gameOver = false
+        self.winner = nil
+        self.gameEndReason = nil
+        
+        // Forcer la mise à jour de l'interface
+        objectWillChange.send()
+    }
+    
+    
     
     // ICI j'ai tout pour le algorithim
     
