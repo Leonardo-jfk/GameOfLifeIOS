@@ -186,12 +186,20 @@ class ChessGame: ObservableObject {
     
     private func linearMoves(row: Int, col: Int, directions: [(Int, Int)]) -> [(Int, Int)] {
         var moves: [(Int, Int)] = []
+        
+        //  Récupérons la pièce une seule fois au début de façon sécurisée
+            guard let currentPiece = board[row][col] else {
+                return moves // Si pas de pièce, retourne un tableau vide
+            }
+        
         for (dr, dc) in directions {
             var currentRow = row + dr
             var currentCol = col + dc
             while isValidSquare(row: currentRow, col: currentCol) {
+                
+                
                 if let piece = board[currentRow][currentCol] {
-                    if piece.color != board[row][col]!.color {
+                    if piece.color != currentPiece.color {
                         moves.append((currentRow, currentCol))
                     }
                     break

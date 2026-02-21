@@ -71,7 +71,8 @@ struct ChessSquareView: View {
                     Group {
                         if isSelected {
                             Rectangle()
-                                .stroke(Color.black, lineWidth: 6)
+                                .strokeBorder(Color.black, lineWidth: 4)
+                                .padding(2)
                         } else if isValidMove {
                             Circle()
                                 .fill(Color.black.opacity(0.4))
