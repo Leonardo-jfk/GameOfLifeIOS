@@ -57,6 +57,10 @@ struct ChessSquareView: View {
         (row + col) % 2 == 0
     }
     
+    var isKingUnderAttack: Bool {
+            game.isKingAtRisk(row: row, col: col)
+        }
+    
     var body: some View {
         ZStack {
             // Fond de la case
@@ -67,7 +71,7 @@ struct ChessSquareView: View {
                     Group {
                         if isSelected {
                             Rectangle()
-                                .stroke(Color.blue, lineWidth: 3)
+                                .stroke(Color.black, lineWidth: 6)
                         } else if isValidMove {
                             Circle()
                                 .fill(Color.black.opacity(0.4))
@@ -75,6 +79,18 @@ struct ChessSquareView: View {
                         }
                     }
                 )
+            
+            // --- CERCLE D'ATTENTION (ROI EN ÉCHEC) ---
+                        if isKingUnderAttack {
+                            Circle()
+                                .fill(Color.red.opacity(0.3))
+                                .shadow(color: .red, radius: 10)
+                                .padding(2)
+                            
+                            Circle()
+                                .stroke(Color.red, lineWidth: 2)
+                                .padding(2)
+                        }
             
             // Pièce d'échecs
             if let piece = game.board[row][col] {

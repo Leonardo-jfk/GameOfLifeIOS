@@ -327,6 +327,13 @@ class ChessGame: ObservableObject {
         }
         return false
     }
+    
+    
+    func isKingAtRisk(row: Int, col: Int) -> Bool {
+        guard let piece = board[row][col], piece.type == .king else { return false }
+        return isKingInCheck(of: piece.color)
+    }
+    
     // ICI j'ai tout pour le algorithim
     
     // MARK: - Algorithme Minimax (Corrigé)
