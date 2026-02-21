@@ -60,6 +60,9 @@ struct ChessSquareView: View {
     var isKingUnderAttack: Bool {
             game.isKingAtRisk(row: row, col: col)
         }
+    var isQueenUnderAttack: Bool {
+        game.isQueenAtRisk(row: row, col: col)
+    }
     
     var body: some View {
         ZStack {
@@ -82,7 +85,7 @@ struct ChessSquareView: View {
                 )
             
             // --- CERCLE D'ATTENTION (ROI EN ÉCHEC) ---
-                        if isKingUnderAttack {
+                        if isKingUnderAttack || isQueenUnderAttack{
                             Circle()
                                 .fill(Color.red.opacity(0.3))
                                 .shadow(color: .red, radius: 10)

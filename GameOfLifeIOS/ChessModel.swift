@@ -232,11 +232,11 @@ class ChessGame: ObservableObject {
     // MARK: - ChessGame (ajoutez ces méthodes)
     
     // Ajoutez cette méthode pour trouver le roi d'une couleur
-    private func findKing(of color: PieceColor) -> ChessPiece? {
+    private func findKingOrQueen(of color: PieceColor) -> ChessPiece? {
         for row in 0..<8 {
             for col in 0..<8 {
                 if let piece = board[row][col],
-                   piece.type == .king,
+                   piece.type == .king || piece.type == .queen  ,
                    piece.color == color {
                     return piece
                 }
@@ -263,9 +263,14 @@ class ChessGame: ObservableObject {
     
     // Ajoutez cette méthode pour vérifier si le roi est en échec
     private func isKingInCheck(of color: PieceColor) -> Bool {
-        guard let king = findKing(of: color) else { return false }
+        guard let king = findKingOrQueen(of: color) else { return false }
         let opponentColor: PieceColor = (color == .white) ? .black : .white
         return isSquareAttacked(row: king.position.row, col: king.position.col, by: opponentColor)
+    }
+    private func isQueenInCheck(of color: PieceColor) -> Bool {
+        guard let  queen = findKingOrQueen(of: color) else { return false }
+        let opponentColor: PieceColor = (color == .white) ? .black : .white
+        return isSquareAttacked(row: queen.position.row, col: queen.position.col, by: opponentColor)
     }
     
     
@@ -376,6 +381,10 @@ class ChessGame: ObservableObject {
         guard let piece = board[row][col], piece.type == .king else { return false }
         return isKingInCheck(of: piece.color)
     }
+    func isQueenAtRisk(row: Int, col: Int) -> Bool {
+        guard let piece = board[row][col], piece.type == .queen else { return false }
+        return isQueenInCheck(of: piece.color)
+    }ç
     
     // ICI j'ai tout pour le algorithim
     
@@ -554,7 +563,7 @@ class ChessGame: ObservableObject {
                 tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
                 tempBoard[move.from.row][move.from.col] = nil
                 
-                let boardValue = self.minimax(boardState: tempBoard, depth: 5, isMaximizing: false, alpha: -10000, beta: 10000)
+                let boardValue = self.minimax(boardState: tempBoard, depth: 2, isMaximizing: false, alpha: -10000, beta: 10000)
                 
                 // Annuler le coup
                 tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
