@@ -50,6 +50,19 @@ enum GameEndReason {
     // etc.
 }
 
+enum AIDifficulty: String, CaseIterable {
+    case easy = "Facile"
+    case medium = "Moyen"
+    case hard = "Expert"
+}
+
+enum BoardTheme: String, CaseIterable {
+    case classic = "Classique"
+    case wood = "Bois"
+    case purple = "Violet"
+}
+
+
 // MARK: - ChessPiece
 struct ChessPiece: Identifiable {
     let id = UUID()
@@ -289,12 +302,12 @@ class ChessGame: ObservableObject {
     func movePiece(to row: Int, col: Int) {
         // SÉCURITÉ 1 : Si le jeu est fini, on ne fait rien
         guard let selected = selectedPiece, !gameOver else { return }
-        
+        // SAUVEGARDE AVANT LE MOUVEMENT
+        saveState()
         let oldRow = selected.position.row
         let oldCol = selected.position.col
                 
-                // SAUVEGARDE AVANT LE MOUVEMENT
-                saveState()
+               
         
 //        if let capturedPiece = board[row][col] {
 //            if capturedPiece.color == .white {
@@ -427,9 +440,14 @@ class ChessGame: ObservableObject {
         
         // Appelez cette méthode au DEBUT de movePiece() pour sauvegarder l'état actuel
         func saveState() {
-            boardHistory.append(self.board)
-            // Limiter l'historique si nécessaire (ex: 20 derniers coups)
-            if boardHistory.count > 20 { boardHistory.removeFirst() }
+            // IMPORTANT: Sauvegarder l'état AVANT le mouvement
+               let currentBoardCopy = self.board.map { $0.map { $0 } }
+               boardHistory.append(currentBoardCopy)
+               
+               // Limiter l'historique si nécessaire (ex: 20 derniers coups)
+               if boardHistory.count > 20 {
+                   boardHistory.removeFirst()
+               }
         }
         
     func undoMove() {
@@ -446,7 +464,9 @@ class ChessGame: ObservableObject {
         self.board = previousBoard
         
         // Inverser le tour
-        self.currentPlayer = (currentPlayer == .white) ? .black : .white
+//        self.currentPlayer = (currentPlayer == .white) ? .black : .white
+        self.capturedWhitePieces = []
+           self.capturedBlackPieces = []
         
         // Réinitialiser les indicateurs de sélection et de fin de jeu
         self.selectedPiece = nil

@@ -17,6 +17,7 @@ struct ChessFriend: View {
     @State private var showHint = false
 //    @Binding var resetGame = false
     @Environment(\.dismiss) var dismiss
+    @State private var showSettings = false
   
     
     var body: some View {
@@ -126,10 +127,24 @@ struct ChessFriend: View {
                     }  .disabled(game.boardHistory.isEmpty)
                     
                     // Botón Configuración (nuevo)
-                    Button(action: {
-                        // Aquí puedes agregar configuración
-                        print("Abrir configuración")
-                    }) {
+//                    Button(action: {
+//                        // Aquí puedes agregar configuración
+//                        print("Abrir configuración")
+//                    }) {
+//                        VStack(spacing: 5) {
+//                            Image(systemName: "gear")
+//                                .font(.title2)
+//                                .foregroundColor(.white)
+//                                .frame(width: 50, height: 50)
+//                                .background(Circle().fill(Color.gray.opacity(0.7)))
+//                            
+//                            Text("Ajustes")
+//                                .font(.caption)
+//                                .foregroundColor(.white)
+//                        }
+//                    }
+                    
+                    Button(action: { showSettings = true }) {
                         VStack(spacing: 5) {
                             Image(systemName: "gear")
                                 .font(.title2)
@@ -141,6 +156,9 @@ struct ChessFriend: View {
                                 .font(.caption)
                                 .foregroundColor(.white)
                         }
+                    }
+                    .sheet(isPresented: $showSettings) {
+                        ChessSettingsView()
                     }
                 }
                 .padding(.bottom, 20)

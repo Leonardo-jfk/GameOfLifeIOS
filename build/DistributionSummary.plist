@@ -65,9 +65,9 @@
 			<key>profile</key>
 			<dict>
 				<key>UUID</key>
-				<string>f32a4e14-2cec-4490-a0bf-3d88a85e2ff5</string>
+				<string>cb8a25fc-3fc6-4e26-9cea-20012c4bd4b6</string>
 				<key>dateExpires</key>
-				<string>15/02/2026</string>
+				<string>25/02/2026</string>
 				<key>name</key>
 				<string>iOS Team Provisioning Profile: Leonardo.GameOfLifeIOS</string>
 			</dict>

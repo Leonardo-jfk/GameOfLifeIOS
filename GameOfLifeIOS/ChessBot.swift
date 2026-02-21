@@ -112,8 +112,8 @@ struct ChessBot: View {
                     
                     // Botón Deshacer
                     Button(action: {
-                        // Aquí puedes implementar la funcionalidad de deshacer
-                        print("Deshacer movimiento")
+                        game.undoMove()
+                            print("Mouvement annulé")
                     }) {
                         VStack(spacing: 5) {
                             Image(systemName: "arrow.uturn.backward")
@@ -126,7 +126,7 @@ struct ChessBot: View {
                                 .font(.caption)
                                 .foregroundColor(.white)
                         }
-                    }
+                    }  .disabled(game.boardHistory.isEmpty)
                     
                     // Botón Configuración (nuevo)
                     Button(action: {
