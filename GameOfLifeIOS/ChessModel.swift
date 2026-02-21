@@ -293,6 +293,20 @@ class ChessGame: ObservableObject {
         let oldRow = selected.position.row
         let oldCol = selected.position.col
         
+//        if let capturedPiece = board[row][col] {
+//            if capturedPiece.color == .white {
+//                capturedWhitePieces.append(capturedPiece)
+//            } else {
+//                capturedBlackPieces.append(capturedPiece)
+//            }
+//            
+//            if capturedPiece.type == .king {
+//                gameOver = true
+//                winner = selected.color // Définit le gagnant
+//                gameEndReason = .checkmate(selected.color)
+//            }
+//        }
+        // Dans ChessModel.swift, cherchez la fonction movePiece
         if let capturedPiece = board[row][col] {
             if capturedPiece.color == .white {
                 capturedWhitePieces.append(capturedPiece)
@@ -301,9 +315,13 @@ class ChessGame: ObservableObject {
             }
             
             if capturedPiece.type == .king {
-                gameOver = true
-                winner = selected.color // Définit le gagnant
-                gameEndReason = .checkmate(selected.color)
+                // IMPORTANT : Définir le gagnant d'abord
+                self.winner = currentPlayer
+                self.gameEndReason = .checkmate(currentPlayer)
+                
+                // Ensuite seulement, arrêter le jeu
+                self.gameOver = true
+                return
             }
         }
         
