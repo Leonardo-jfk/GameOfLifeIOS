@@ -57,11 +57,23 @@ struct ChessSquareView: View {
         (row + col) % 2 == 0
     }
     
-    var isKingUnderAttack: Bool {
-            game.isKingAtRisk(row: row, col: col)
+//    var isKingUnderAttack: Bool {
+//            game.isKingAtRisk(row: row, col: col)
+//        }
+//    var isQueenUnderAttack: Bool {
+//        game.isQueenAtRisk(row: row, col: col)
+//    }
+    var isUnderAttack: Bool {
+        guard let piece = game.board[row][col] else { return false }
+        
+        switch piece.type {
+        case .king:
+            return game.isKingInCheck(of: piece.color)
+        case .queen:
+            return game.isQueenInCheck(of: piece.color)
+        default:
+            return false
         }
-    var isQueenUnderAttack: Bool {
-        game.isQueenAtRisk(row: row, col: col)
     }
     
     var body: some View {
@@ -85,16 +97,38 @@ struct ChessSquareView: View {
                 )
             
             // --- CERCLE D'ATTENTION (ROI EN ÉCHEC) ---
-                        if isKingUnderAttack || isQueenUnderAttack{
-                            Circle()
-                                .fill(Color.red.opacity(0.3))
-                                .shadow(color: .red, radius: 10)
-                                .padding(2)
-                            
-                            Circle()
-                                .stroke(Color.red, lineWidth: 2)
-                                .padding(2)
-                        }
+//            if isKingUnderAttack {
+//                Circle()
+//                    .fill(Color.red.opacity(0.3))
+//                    .shadow(color: .red, radius: 10)
+//                    .padding(2)
+//                
+//                Circle()
+//                    .stroke(Color.red, lineWidth: 2)
+//                    .padding(2)
+//            }
+//            if isQueenUnderAttack{
+//                Circle()
+//                    .fill(Color.red.opacity(0.3))
+//                    .shadow(color: .red, radius: 10)
+//                    .padding(2)
+            //
+            //                Circle()
+            //                    .stroke(Color.red, lineWidth: 2)
+            //                    .padding(2)
+            //            }
+            if isUnderAttack{
+                Circle()
+                    .fill(Color.red.opacity(0.3))
+                    .shadow(color: .red, radius: 10)
+                    .padding(2)
+                
+                Circle()
+                    .stroke(Color.red, lineWidth: 2)
+                    .padding(2)
+            }
+            
+            
             
             // Pièce d'échecs
             if let piece = game.board[row][col] {
