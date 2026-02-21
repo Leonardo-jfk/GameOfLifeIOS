@@ -64,7 +64,7 @@ struct ChessFriend: View {
                 .padding(.horizontal, 20)
                 
                 Spacer()
-               
+                
                 // Plus besoin de tout le ZStack complexe, juste ceci :
                 StyledBoardView(game: game, gradientColors: [.purple, .blue, .cyan])
                     .padding(.horizontal, 20)
@@ -172,10 +172,10 @@ struct ChessFriend: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                         }
-                        .padding()
-                        .background(Color.black.opacity(0.9))
-                        .cornerRadius(20)
-                        .padding(40)
+                            .padding()
+                            .background(Color.black.opacity(0.9))
+                            .cornerRadius(20)
+                            .padding(40)
                     )
             }
         }
@@ -184,11 +184,22 @@ struct ChessFriend: View {
                 game.resetGame()
             }
             Button("Menu Principal") {
-//                ContentView()
                 dismiss()
             }
         } message: {
-            if let winnerDetected = game.winner {
+            if let reason = game.gameEndReason {
+                switch reason {
+                case .checkmate(let winnerColor):
+                    Text("Les \(winnerColor == .white ? "BLANCS" : "NOIRS") ont gagné par échec et mat !")
+                case .stalemate:
+                    Text("Pat ! Match nul.")
+                case .insufficientMaterial:
+                    Text("Matériel insuffisant ! Match nul.")
+                case .resignation:
+                    Text("Abandon")
+                }
+            } else if let winnerDetected = game.winner {
+                // Fallback pour l'ancien système
                 Text("Les \(winnerDetected == .white ? "BLANCS" : "NOIRS") ont gagné !")
             } else {
                 Text("Match nul !")

@@ -42,6 +42,14 @@ extension PieceType {
     }
 }
 
+enum GameEndReason {
+    case checkmate(PieceColor)  // Le gagnant
+    case stalemate              // Pat
+    case insufficientMaterial   // Matériel insuffisant
+    case resignation(PieceColor) // Abandon
+    // etc.
+}
+
 // MARK: - ChessPiece
 struct ChessPiece: Identifiable {
     let id = UUID()
@@ -62,6 +70,7 @@ class ChessGame: ObservableObject {
     
     @Published var gameOver = false
     @Published var winner: PieceColor? = nil
+    @Published var gameEndReason: GameEndReason?
     
     init() {
         setupBoard()
@@ -277,7 +286,7 @@ class ChessGame: ObservableObject {
             if capturedPiece.type == .king {
                 gameOver = true
                 winner = selected.color // Définit le gagnant
-                // On peut s'arrêter ici ou laisser le mouvement se finir visuellement
+                gameEndReason = .checkmate(selected.color)
             }
         }
         
@@ -300,6 +309,32 @@ class ChessGame: ObservableObject {
         objectWillChange.send()
     }
     
+    
+    // Ajoutez cette méthode pour vérifier le pat
+        func checkStalemate() -> Bool {
+            // Vérifier si le joueur actuel n'a aucun mouvement légal et n'est pas en échec
+            guard !isKingInCheck(of: currentPlayer) else { return false }
+            return !hasAnyValidMove(for: currentPlayer)
+        }
+        
+        // Après chaque mouvement, vérifiez l'état du jeu
+    func checkGameState() {
+        if gameOver { return }
+        
+        if isKingInCheck(of: currentPlayer) {
+            if !hasAnyValidMove(for: currentPlayer) {
+                // Échec et mat
+                gameOver = true
+                winner = currentPlayer == .white ? .black : .white
+                gameEndReason = .checkmate(winner!)
+            }
+        } else if !hasAnyValidMove(for: currentPlayer) {
+            // Pat
+            gameOver = true
+            winner = nil
+            gameEndReason = .stalemate
+        }
+    }
     // Ajoutez cette méthode pour vérifier s'il reste des mouvements valides
     private func hasAnyValidMove(for color: PieceColor) -> Bool {
         for row in 0..<8 {
