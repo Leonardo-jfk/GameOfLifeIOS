@@ -13,7 +13,7 @@ import Combine
 struct ChessFriend: View {
     @StateObject public var game = ChessGame()
     @State private var showWinnerAlert = false
-    @State private var winner: PieceColor?
+//    @State private var winner: PieceColor?
     @State private var showHint = false
 //    @Binding var resetGame = false
     @Environment(\.dismiss) var dismiss
@@ -188,8 +188,8 @@ struct ChessFriend: View {
                 dismiss()
             }
         } message: {
-            if let winner = winner {
-                Text("Les \(winner == .white ? "BLANCS" : "NOIRS") ont gagné !")
+            if let winnerDetected = game.winner {
+                Text("Les \(winnerDetected == .white ? "BLANCS" : "NOIRS") ont gagné !")
             } else {
                 Text("Match nul !")
             }

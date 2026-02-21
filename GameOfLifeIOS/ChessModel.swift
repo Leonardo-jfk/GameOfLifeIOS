@@ -346,75 +346,158 @@ class ChessGame: ObservableObject {
     
     // MARK: - Algorithme Minimax (Corrigé)
     // On ajoute le paramètre 'currentBoard' pour ne pas utiliser la variable @Published
+//    var transpositionTable: [String: (score: Int, depth: Int)] = [:]
+//    
+//    func minimax(boardState: [[ChessPiece?]], depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
+//        let boardKey = generateHash(for: boardState)
+//        if let cached = transpositionTable[boardKey], cached.depth >= depth {
+//                return cached.score
+//            }
+//        
+//        if depth == 0 || gameOver {
+//            return evaluateBoard(boardState) // On évalue l'état simulé
+//        }
+//        
+//        var currentAlpha = alpha
+//        var currentBeta = beta
+//        var tempBoard = boardState // On travaille sur une copie locale
+//        
+//        let finalEval: Int
+//        
+//        if isMaximizing {
+//            var maxEval = -10000
+//            let moves = getAllPossibleMoves(for: .black, on: tempBoard)
+//            
+//            for move in moves {
+//                let captured = tempBoard[move.to.row][move.to.col]
+//                
+//                // Simulation locale
+//                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+//                tempBoard[move.from.row][move.from.col] = nil
+//                
+//                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
+//                
+//                // Annulation locale
+//                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+//                tempBoard[move.to.row][move.to.col] = captured
+//                
+//                maxEval = max(maxEval, currentMoveEval)
+//                currentAlpha = max(currentAlpha, currentMoveEval)
+//                if currentBeta <= currentAlpha { break }
+//            }
+//            finalEval = maxEval
+//        } else {
+//            var minEval = 10000
+//            let moves = getAllPossibleMoves(for: .white, on: tempBoard)
+//            
+//            for move in moves {
+//                let captured = tempBoard[move.to.row][move.to.col]
+//                
+//                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+//                tempBoard[move.from.row][move.from.col] = nil
+//                
+//                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
+//                
+//                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+//                tempBoard[move.to.row][move.to.col] = captured
+//                
+//                minEval = min(minEval, currentMoveEval)
+//                currentBeta = min(currentBeta, currentMoveEval)
+//                if currentBeta <= currentAlpha { break }
+//            }
+//            finalEval =  minEval
+//        }
+//        
+//        if transpositionTable.count > 100_000 { // Limite arbitraire
+//            transpositionTable.removeAll(keepingCapacity: true)
+//        }
+//        transpositionTable[boardKey] = (score: finalEval, depth: depth)
+//            return finalEval
+//    }
+    // 1. Ajoutez un verrou en haut de votre classe ChessGame
+    private let tableLock = NSLock()
     var transpositionTable: [String: (score: Int, depth: Int)] = [:]
-    
+
     func minimax(boardState: [[ChessPiece?]], depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
         let boardKey = generateHash(for: boardState)
-        if let cached = transpositionTable[boardKey], cached.depth >= depth {
-                return cached.score
-            }
+        
+        // 2. Utilisez le verrou pour LIRE
+        tableLock.lock()
+        let cached = transpositionTable[boardKey]
+        tableLock.unlock()
+        
+        if let cached = cached, cached.depth >= depth {
+            return cached.score
+        }
         
         if depth == 0 || gameOver {
-            return evaluateBoard(boardState) // On évalue l'état simulé
-        }
+                   return evaluateBoard(boardState) // On évalue l'état simulé
+               }
+       
+               var currentAlpha = alpha
+               var currentBeta = beta
+               var tempBoard = boardState // On travaille sur une copie locale
+       
+               let finalEval: Int
+       
+               if isMaximizing {
+                   var maxEval = -10000
+                   let moves = getAllPossibleMoves(for: .black, on: tempBoard)
+       
+                   for move in moves {
+                       let captured = tempBoard[move.to.row][move.to.col]
+       
+                       // Simulation locale
+                       tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+                       tempBoard[move.from.row][move.from.col] = nil
+       
+                       let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
+       
+                       // Annulation locale
+                       tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+                       tempBoard[move.to.row][move.to.col] = captured
+       
+                       maxEval = max(maxEval, currentMoveEval)
+                       currentAlpha = max(currentAlpha, currentMoveEval)
+                       if currentBeta <= currentAlpha { break }
+                   }
+                   finalEval = maxEval
+               } else {
+                   var minEval = 10000
+                   let moves = getAllPossibleMoves(for: .white, on: tempBoard)
+       
+                   for move in moves {
+                       let captured = tempBoard[move.to.row][move.to.col]
+       
+                       tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+                       tempBoard[move.from.row][move.from.col] = nil
+       
+                       let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
+       
+                       tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+                       tempBoard[move.to.row][move.to.col] = captured
+       
+                       minEval = min(minEval, currentMoveEval)
+                       currentBeta = min(currentBeta, currentMoveEval)
+                       if currentBeta <= currentAlpha { break }
+                   }
+                   finalEval =  minEval
+               }
+               
         
-        var currentAlpha = alpha
-        var currentBeta = beta
-        var tempBoard = boardState // On travaille sur une copie locale
-        
-        let finalEval: Int
-        
-        if isMaximizing {
-            var maxEval = -10000
-            let moves = getAllPossibleMoves(for: .black, on: tempBoard)
-            
-            for move in moves {
-                let captured = tempBoard[move.to.row][move.to.col]
-                
-                // Simulation locale
-                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
-                tempBoard[move.from.row][move.from.col] = nil
-                
-                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
-                
-                // Annulation locale
-                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
-                tempBoard[move.to.row][move.to.col] = captured
-                
-                maxEval = max(maxEval, currentMoveEval)
-                currentAlpha = max(currentAlpha, currentMoveEval)
-                if currentBeta <= currentAlpha { break }
-            }
-            finalEval = maxEval
-        } else {
-            var minEval = 10000
-            let moves = getAllPossibleMoves(for: .white, on: tempBoard)
-            
-            for move in moves {
-                let captured = tempBoard[move.to.row][move.to.col]
-                
-                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
-                tempBoard[move.from.row][move.from.col] = nil
-                
-                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
-                
-                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
-                tempBoard[move.to.row][move.to.col] = captured
-                
-                minEval = min(minEval, currentMoveEval)
-                currentBeta = min(currentBeta, currentMoveEval)
-                if currentBeta <= currentAlpha { break }
-            }
-            finalEval =  minEval
-        }
-        
-        if transpositionTable.count > 100_000 { // Limite arbitraire
+        // 3. Utilisez le verrou pour ÉCRIRE
+        tableLock.lock()
+        if transpositionTable.count > 100_000 {
             transpositionTable.removeAll(keepingCapacity: true)
         }
         transpositionTable[boardKey] = (score: finalEval, depth: depth)
-            return finalEval
+        tableLock.unlock()
+        
+        return finalEval
     }
-
+    
+    
+    
     func makeBotMove() {
         // 1. On capture l'état actuel du board sur le thread principal
         let currentBoardSnapshot = self.board
