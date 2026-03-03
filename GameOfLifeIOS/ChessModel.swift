@@ -139,6 +139,11 @@ class ChessGame: ObservableObject {
         if let piece = board[row][col], piece.color == currentPlayer {
             selectedPiece = piece
             validMoves = calculateValidMoves(for: piece)
+            
+            // Petite vibration de sélection
+            if UserDefaults.standard.bool(forKey: "hapticEnabled") {
+                HapticManager.shared.playSelection()
+            }
         } else {
             selectedPiece = nil
             validMoves = []
@@ -302,6 +307,12 @@ class ChessGame: ObservableObject {
     func movePiece(to row: Int, col: Int) {
         // SÉCURITÉ 1 : Si le jeu est fini, on ne fait rien
         guard let selected = selectedPiece, !gameOver else { return }
+        
+        let hapticEnabled = UserDefaults.standard.bool(forKey: "hapticEnabled")
+            if hapticEnabled {
+                // .medium donne un ressenti physique satisfaisant pour un déplacement de pièce
+                HapticManager.shared.playImpact(style: .medium)
+            }
         // SAUVEGARDE AVANT LE MOUVEMENT
         saveState()
         let oldRow = selected.position.row
@@ -324,6 +335,8 @@ class ChessGame: ObservableObject {
 //        }
         // Dans ChessModel.swift, cherchez la fonction movePiece
         if let capturedPiece = board[row][col] {
+            if hapticEnabled { HapticManager.shared.playImpact(style: .heavy) }
+            
             if capturedPiece.color == .white {
                 capturedWhitePieces.append(capturedPiece)
             } else {
@@ -776,10 +789,22 @@ class ChessGame: ObservableObject {
     
     
     
-    
-    
-    
-    
+    //
+    //Haptique
+    //
+    class HapticManager {
+        static let shared = HapticManager()
+        
+        func playSelection() {
+            let generator = UISelectionFeedbackGenerator()
+            generator.selectionChanged()
+        }
+        
+        func playImpact(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) {
+            let generator = UIImpactFeedbackGenerator(style: style)
+            generator.impactOccurred()
+        }
+    }
     
     
     

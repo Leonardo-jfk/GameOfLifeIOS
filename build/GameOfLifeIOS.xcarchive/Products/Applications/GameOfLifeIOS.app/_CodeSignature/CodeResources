@@ -14,7 +14,7 @@
 		</data>
 		<key>Assets.car</key>
 		<data>
-		D/qN9mlG4xBzBgpnA33SD2lxT4g=
+		eKvz4I9E9rupujIXMGq8nXl0Gi0=
 		</data>
 		<key>BackChess.jpg</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>Frameworks/DotLottiePlayer.framework/DotLottiePlayer</key>
 		<data>
-		y/HB3+OvVwalxKO/36KoxfA52MY=
+		8YTdJ47ncvMn68ctUeb0KZl0roA=
 		</data>
 		<key>Frameworks/DotLottiePlayer.framework/Info.plist</key>
 		<data>
@@ -34,7 +34,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		RBTl8sWLYUI8PVVlMbdRwIENpsw=
+		jxTZ3gT6+Qj85O1mVfX/KuKEZFc=
 		</data>
 		<key>LoopBack.json</key>
 		<data>
@@ -62,7 +62,11 @@
 		</data>
 		<key>embedded.mobileprovision</key>
 		<data>
-		4h4BcznwpIpVWKstZj4SrnkLhgE=
+		DTWC34VEWZVpXAN9YyNl80ba0R0=
+		</data>
+		<key>samurai2.mp3</key>
+		<data>
+		i1XCqtAGT0fhOAH/7q186JL5Bzk=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -85,7 +89,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			VZ5yZi5QPTKpufoclZYSe+A68ChTmUrRxEkK4TeVdds=
+			R28toqf5I10/SNjI805LyscouNjCoqSchkKnz1axgk0=
 			</data>
 		</dict>
 		<key>BackChess.jpg</key>
@@ -99,7 +103,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+Boh/gj0rwc9j4OTioDk95EwRpjghFH/ThxYlDexSUg=
+			xdxmUVecinPNMmcwZe8X5PGBn8ULtq1dqrKNvhLsJnY=
 			</data>
 		</dict>
 		<key>Frameworks/DotLottiePlayer.framework/Info.plist</key>
@@ -155,7 +159,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			UxWJT5Bbif7pRAXWARbADVcNauObky6pPwu8LhahzaU=
+			qxLumCyg+V0QNCvmbl/yjUczemLLm/qwO2tZUInD7SM=
+			</data>
+		</dict>
+		<key>samurai2.mp3</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			H2rRsoS1hggf+vx7hl5TuTXWgcOljSQ1eTa06nKB/p4=
 			</data>
 		</dict>
 	</dict>
