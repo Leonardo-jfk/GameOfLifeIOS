@@ -22,7 +22,7 @@ struct ChessSettingsView: View {
     @AppStorage("boardTheme") private var boardTheme = BoardTheme.classic.rawValue
     @AppStorage("soundEnabled") private var soundEnabled = true
     @AppStorage("hapticEnabled") private var hapticEnabled = true
-    
+    //ff
     var body: some View {
         NavigationView {
             ZStack {

@@ -19,7 +19,7 @@ struct ChessFriend: View {
     @Environment(\.dismiss) var dismiss
     @State private var showSettings = false
   
-    
+    //will it work?
     var body: some View {
         ZStack {
             // Arrière-plan DIFERENTE para la segunda vista
