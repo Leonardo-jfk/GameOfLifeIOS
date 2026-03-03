@@ -22,6 +22,7 @@ struct ChessBot: View {
     @State private var showHint = false
 //    @Binding var resetGame = false
     @Environment(\.dismiss) var dismiss
+    @State private var showSettings = false
   
     
     var body: some View {
@@ -129,10 +130,7 @@ struct ChessBot: View {
                     }  .disabled(game.boardHistory.isEmpty)
                     
                     // Botón Configuración (nuevo)
-                    Button(action: {
-                        // Aquí puedes agregar configuración
-                        print("Abrir configuración")
-                    }) {
+                    Button(action: { showSettings = true }) {
                         VStack(spacing: 5) {
                             Image(systemName: "gear")
                                 .font(.title2)
@@ -144,6 +142,9 @@ struct ChessBot: View {
                                 .font(.caption)
                                 .foregroundColor(.white)
                         }
+                    }
+                    .sheet(isPresented: $showSettings) {
+                        ChessSettingsView()
                     }
                 }
                 .padding(.bottom, 20)

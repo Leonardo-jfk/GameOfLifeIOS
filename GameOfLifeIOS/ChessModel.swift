@@ -307,7 +307,7 @@ class ChessGame: ObservableObject {
     func movePiece(to row: Int, col: Int) {
         // SÉCURITÉ 1 : Si le jeu est fini, on ne fait rien
         guard let selected = selectedPiece, !gameOver else { return }
-        
+        AudioManager.shared.playMoveSound()
         let hapticEnabled = UserDefaults.standard.bool(forKey: "hapticEnabled")
             if hapticEnabled {
                 // .medium donne un ressenti physique satisfaisant pour un déplacement de pièce

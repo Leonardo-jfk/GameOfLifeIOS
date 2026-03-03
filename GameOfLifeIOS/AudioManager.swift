@@ -101,4 +101,25 @@ final class AudioManager: ObservableObject {
         player?.stop()
         player = nil
     }
+    
+    
+
+    // Ajoutez cette propriété en haut de la classe
+    private var effectPlayer: AVAudioPlayer?
+
+    // Ajoutez cette fonction
+    func playMoveSound() {
+        // Vérifier si les sons sont activés dans les réglages
+        guard UserDefaults.standard.bool(forKey: "soundEnabled") else { return }
+
+        guard let url = Bundle.main.url(forResource: "ChessSound", withExtension: "mp3") else { return }
+
+        do {
+            effectPlayer = try AVAudioPlayer(contentsOf: url)
+            effectPlayer?.volume = 1.0 // Volume indépendant de la musique
+            effectPlayer?.play()
+        } catch {
+            print("Erreur son mouvement: \(error)")
+        }
+    }
 }
