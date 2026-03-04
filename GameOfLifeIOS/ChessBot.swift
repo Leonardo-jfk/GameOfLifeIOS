@@ -23,7 +23,7 @@ struct ChessBot: View {
 //    @Binding var resetGame = false
     @Environment(\.dismiss) var dismiss
     @State private var showSettings = false
-  
+    @State  var isVsBot = true
     
     var body: some View {
         ZStack {

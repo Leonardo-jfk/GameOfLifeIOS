@@ -18,7 +18,7 @@ struct ChessFriend: View {
 //    @Binding var resetGame = false
     @Environment(\.dismiss) var dismiss
     @State private var showSettings = false
-  
+    @State  var isVsBot = false
     //will it work?
     var body: some View {
         ZStack {
