@@ -41,45 +41,178 @@ import Combine
                     List {
                         // Section Thème avec aperçu
                         Section(header: Text("Thème du Plateau").foregroundColor(.white)) {
+//                            ForEach(BoardTheme.allCases, id: \.self) { theme in
+//                                Button(action: {
+//                                    themeManager.currentTheme = theme.rawValue
+//                                }) {
+////                                    HStack {
+////                                                    // Partie gauche avec largeur FIXE pour tous
+////                                                    HStack(spacing: 8) {
+////                                                        // Zone de l'icône - même largeur pour tous
+////                                                        Group {
+////                                                            if theme.rawValue == BoardTheme.wood.rawValue {
+////                                                                Image(systemName: "tree")
+////                                                                    .foregroundColor(.gray)
+////                                                                    .font(.system(size: 16))
+////                                                            } else {
+////                                                                Color.clear
+////                                                            }
+////                                                        }
+////                                                        .frame(width: 24, height: 24) // Largeur fixe pour l'icône
+////                                                        
+////                                                        // Aperçu des couleurs
+////                                                        HStack(spacing: 2) {
+////                                                            Rectangle()
+////                                                                .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
+////                                                                .frame(width: 24, height: 24)
+////                                                            Rectangle()
+////                                                                .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
+////                                                                .frame(width: 24, height: 24)
+////                                                        }
+////                                                        .cornerRadius(4)
+////                                                    }
+////                                                    .frame(width: 90, alignment: .leading) // Largeur fixe pour toute la partie gauche
+//                                        
+//                                        
+////                                        HStack {
+////                                                        // Partie gauche avec l'icône et l'aperçu
+////                                                        HStack(spacing: 12) {
+////                                                            // ZStack pour que l'icône soit centrée même quand elle n'existe pas
+////                                                            ZStack {
+////                                                                if theme.rawValue == BoardTheme.wood.rawValue {
+////                                                                    Image(systemName: "tree")
+////                                                                        .foregroundColor(.gray)
+////                                                                        .font(.system(size: 18))
+////                                                                }
+////                                                            }
+////                                                            .frame(width: 24, height: 24)
+////                                                            
+////                                                            // Aperçu des couleurs
+////                                                            HStack(spacing: 2) {
+////                                                                Rectangle()
+////                                                                    .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
+////                                                                    .frame(width: 24, height: 24)
+////                                                                Rectangle()
+////                                                                    .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
+////                                                                    .frame(width: 24, height: 24)
+////                                                            }
+////                                                            .cornerRadius(4)
+////                                                        }
+////                                                        .frame(width: 100, alignment: .leading)
+//                                        
+//                                    HStack {
+//                                                    // Aperçu des couleurs (toujours présent)
+//                                                    HStack(spacing: 2) {
+//                                                        Rectangle()
+//                                                            .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
+//                                                            .frame(width: 24, height: 24)
+//                                                        Rectangle()
+//                                                            .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
+//                                                            .frame(width: 24, height: 24)
+//                                                    }
+//                                                    .cornerRadius(4)
+//                                                    
+//                                                    // Icône pour le bois (après l'aperçu)
+//                                                    if theme.rawValue == BoardTheme.wood.rawValue {
+//                                                        Image(systemName: "tree")
+//                                                            .foregroundColor(.gray)
+//                                                            .font(.system(size: 18))
+//                                                            .frame(width: 24)
+//                                                    } else {
+//                                                        // Espace vide pour maintenir l'alignement
+//                                                        Color.clear
+//                                                            .frame(width: 24)
+//                                                    }
+//                                    
+//                                    
+//                                        Text(theme.rawValue)
+//                                            .foregroundColor(.white)
+//                                        
+//                                        Spacer()
+//                                        
+//                                        if themeManager.currentTheme == theme.rawValue {
+//                                            Image(systemName: "checkmark")
+//                                                .foregroundColor(.purple)
+//                                        }
+//                                    }
+//                                }
+//                                .listRowBackground(Color.white.opacity(0.1))
+//                            }
+                            
+                            
                             ForEach(BoardTheme.allCases, id: \.self) { theme in
                                 Button(action: {
                                     themeManager.currentTheme = theme.rawValue
                                 }) {
-                                    HStack {
-                                                    // Partie gauche avec largeur FIXE pour tous
-                                                    HStack(spacing: 8) {
-                                                        // Zone de l'icône - même largeur pour tous
-                                                        Group {
-                                                            if theme.rawValue == BoardTheme.wood.rawValue {
-                                                                Image(systemName: "tree")
-                                                                    .foregroundColor(.gray)
-                                                                    .font(.system(size: 16))
-                                                            } else {
-                                                                Color.clear
-                                                            }
-                                                        }
-                                                        .frame(width: 24, height: 24) // Largeur fixe pour l'icône
-                                                        
+//                                    HStack {
+//                                        // --- BLOC GAUCHE : APERÇU + ICÔNE (Largeur fixe pour symétrie) ---
+//                                        HStack(spacing: 8) {
+//                                            // Aperçu des couleurs
+//                                            HStack(spacing: 2) {
+//                                                Rectangle()
+//                                                    .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
+//                                                    .frame(width: 20, height: 20)
+//                                                Rectangle()
+//                                                    .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
+//                                                    .frame(width: 20, height: 20)
+//                                            }
+//                                            .cornerRadius(4)
+//                                            
+//                                            // Icône (Arbre pour bois, ou espace vide de même taille)
+////                                            ZStack {
+//                                                if theme == .wood {
+//                                                    Image(systemName: "tree")
+//                                                        .scaledToFit()
+////                                                        .foregroundColor(.brown)
+////                                                        .font(.system(size: 14))
+////                                                }
+//                                            }
+////                                            .frame(width: 10) // Même largeur pour tout le monde !
+//                                        }
+//                                        .frame(width: 45, alignment: .leading) // Fixe toute la zone de gauche
+                                        
+                                        
+                                        HStack {
                                                         // Aperçu des couleurs
                                                         HStack(spacing: 2) {
-                                                            Rectangle()
-                                                                .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
-                                                                .frame(width: 24, height: 24)
-                                                            Rectangle()
-                                                                .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
-                                                                .frame(width: 24, height: 24)
+                                                            ZStack {
+                                                                Rectangle()
+                                                                    .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
+                                                                    .frame(width: 24, height: 24)
+                                                                
+                                                                // Icône superposée pour le bois
+                                                                if theme.rawValue == BoardTheme.wood.rawValue {
+                                                                    Image(systemName: "tree")
+                                                                        .foregroundColor(.gray)
+                                                                        .font(.system(size: 14))
+                                                                }
+                                                            }
+                                                            
+                                                            ZStack {
+                                                                Rectangle()
+                                                                    .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
+                                                                    .frame(width: 24, height: 24)
+                                                                
+                                                                // Deuxième icône si nécessaire
+//                                                                if theme.rawValue == BoardTheme.wood.rawValue {
+//                                                                    Image(systemName: "leaf")
+//                                                                        .foregroundColor(.green)
+//                                                                        .font(.system(size: 10))
+//                                                                        .offset(x: 5, y: -5)
+//                                                                }
+                                                            }
                                                         }
                                                         .cornerRadius(4)
-                                                    }
-                                                    .frame(width: 90, alignment: .leading) // Largeur fixe pour toute la partie gauche
                                         
+                                        // --- TEXTE DU THÈME ---
                                         Text(theme.rawValue)
                                             .foregroundColor(.white)
                                         
                                         Spacer()
                                         
+                                        // --- CHECKMARK ---
                                         if themeManager.currentTheme == theme.rawValue {
-                                            Image(systemName: "checkmark")
+                                            Image(systemName: "checkmark.circle.fill")
                                                 .foregroundColor(.purple)
                                         }
                                     }
