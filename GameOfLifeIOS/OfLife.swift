@@ -204,23 +204,6 @@ class GameOfLifeModel: ObservableObject {
 }
 
 
-
-
-//struct GameItselfView: View {
-//    var body: some View {
-//        GameItself()
-//            .background(
-//                DotLottieAnimation(fileName: "LoopBack",
-//                                   config: AnimationConfig(autoplay: true, loop: true, speed: 0.2))
-//                    .view()
-//                    .scaledToFill()
-//                    .overlay(Color.black.opacity(0.3))
-//                    .ignoresSafeArea()
-//            )
-//    }
-//}
-
-
 #Preview {
     OfLife()
 }

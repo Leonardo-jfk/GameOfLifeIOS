@@ -322,20 +322,6 @@ class ChessGame: ObservableObject {
         let oldCol = selected.position.col
         
         
-        
-        //        if let capturedPiece = board[row][col] {
-        //            if capturedPiece.color == .white {
-        //                capturedWhitePieces.append(capturedPiece)
-        //            } else {
-        //                capturedBlackPieces.append(capturedPiece)
-        //            }
-        //
-        //            if capturedPiece.type == .king {
-        //                gameOver = true
-        //                winner = selected.color // Définit le gagnant
-        //                gameEndReason = .checkmate(selected.color)
-        //            }
-        //        }
         // Dans ChessModel.swift, cherchez la fonction movePiece
         if let capturedPiece = board[row][col] {
             if hapticEnabled { HapticManager.shared.playImpact(style: .heavy) }
@@ -498,77 +484,7 @@ class ChessGame: ObservableObject {
     
     
     // ICI j'ai tout pour le algorithim
-    
-    // MARK: - Algorithme Minimax (Corrigé)
-    // On ajoute le paramètre 'currentBoard' pour ne pas utiliser la variable @Published
-    //    var transpositionTable: [String: (score: Int, depth: Int)] = [:]
-    //
-    //    func minimax(boardState: [[ChessPiece?]], depth: Int, isMaximizing: Bool, alpha: Int, beta: Int) -> Int {
-    //        let boardKey = generateHash(for: boardState)
-    //        if let cached = transpositionTable[boardKey], cached.depth >= depth {
-    //                return cached.score
-    //            }
-    //
-    //        if depth == 0 || gameOver {
-    //            return evaluateBoard(boardState) // On évalue l'état simulé
-    //        }
-    //
-    //        var currentAlpha = alpha
-    //        var currentBeta = beta
-    //        var tempBoard = boardState // On travaille sur une copie locale
-    //
-    //        let finalEval: Int
-    //
-    //        if isMaximizing {
-    //            var maxEval = -10000
-    //            let moves = getAllPossibleMoves(for: .black, on: tempBoard)
-    //
-    //            for move in moves {
-    //                let captured = tempBoard[move.to.row][move.to.col]
-    //
-    //                // Simulation locale
-    //                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
-    //                tempBoard[move.from.row][move.from.col] = nil
-    //
-    //                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: false, alpha: currentAlpha, beta: currentBeta)
-    //
-    //                // Annulation locale
-    //                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
-    //                tempBoard[move.to.row][move.to.col] = captured
-    //
-    //                maxEval = max(maxEval, currentMoveEval)
-    //                currentAlpha = max(currentAlpha, currentMoveEval)
-    //                if currentBeta <= currentAlpha { break }
-    //            }
-    //            finalEval = maxEval
-    //        } else {
-    //            var minEval = 10000
-    //            let moves = getAllPossibleMoves(for: .white, on: tempBoard)
-    //
-    //            for move in moves {
-    //                let captured = tempBoard[move.to.row][move.to.col]
-    //
-    //                tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
-    //                tempBoard[move.from.row][move.from.col] = nil
-    //
-    //                let currentMoveEval = minimax(boardState: tempBoard, depth: depth - 1, isMaximizing: true, alpha: currentAlpha, beta: currentBeta)
-    //
-    //                tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
-    //                tempBoard[move.to.row][move.to.col] = captured
-    //
-    //                minEval = min(minEval, currentMoveEval)
-    //                currentBeta = min(currentBeta, currentMoveEval)
-    //                if currentBeta <= currentAlpha { break }
-    //            }
-    //            finalEval =  minEval
-    //        }
-    //
-    //        if transpositionTable.count > 100_000 { // Limite arbitraire
-    //            transpositionTable.removeAll(keepingCapacity: true)
-    //        }
-    //        transpositionTable[boardKey] = (score: finalEval, depth: depth)
-    //            return finalEval
-    //    }
+   
     // 1. Ajoutez un verrou en haut de votre classe ChessGame
     private let tableLock = NSLock()
     var transpositionTable: [String: (score: Int, depth: Int)] = [:]
@@ -674,12 +590,6 @@ class ChessGame: ObservableObject {
                 tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
                 tempBoard[move.from.row][move.from.col] = nil
                 
-                //                //niveux d'echeque
-                //                var depthLevel = 1
-                //                if x { depthLevel = 3}
-                //                if z { depthLevel = 5}
-                //
-                //                let boardValue = self.minimax(boardState: tempBoard, depth: depthLevel, isMaximizing: false, alpha: -10000, beta: 10000)
                 
                 let Botdepth = getBotDepth()
                 
@@ -837,225 +747,6 @@ class ChessGame: ObservableObject {
         }
     }
     
-//    struct BoardThemeColors {
-//        let lightSquare: Color
-//        let darkSquare: Color
-//        let borderColor: Color
-//        let highlightColor: Color
-//        let checkColor: Color
-//        
-//        // Propriétés pour les images de fond
-//        var lightSquareImage: Image? = nil
-//        var darkSquareImage: Image? = nil
-//    }
-//}
-//class ThemeManager: ObservableObject {
-//    static let shared = ThemeManager()
-//    
-//    @AppStorage("boardTheme") var currentTheme: String = BoardTheme.classic.rawValue {
-//        didSet {
-//            objectWillChange.send()
-//        }
-//    }
-//    
-//    func getColors(for theme: String) -> BoardThemeColors {
-//        switch theme {
-//        case BoardTheme.classic.rawValue:
-//            return BoardThemeColors(
-//                lightSquare: Color(red: 0.94, green: 0.86, blue: 0.76),
-//                darkSquare: Color(red: 0.56, green: 0.41, blue: 0.26),
-//                borderColor: .brown,
-//                highlightColor: .green.opacity(0.5),
-//                checkColor: .red.opacity(0.7)
-//            )
-//            
-//        case BoardTheme.wood.rawValue:
-//            return BoardThemeColors(
-//                lightSquare: .clear,
-//                darkSquare: .clear,
-//                borderColor: Color(red: 0.36, green: 0.25, blue: 0.15),
-//                highlightColor: .yellow.opacity(0.4),
-//                checkColor: .orange.opacity(0.8),
-//                lightSquareImage: Image("WoodLight"),
-//                darkSquareImage: Image("WoodDark")
-//            )
-//            
-//        case BoardTheme.purple.rawValue:
-//            return BoardThemeColors(
-//                lightSquare: Color(red: 0.9, green: 0.8, blue: 0.95),
-//                darkSquare: Color(red: 0.5, green: 0.3, blue: 0.7),
-//                borderColor: .purple,
-//                highlightColor: .cyan.opacity(0.5),
-//                checkColor: .pink.opacity(0.8)
-//            )
-//            
-//        default:
-//            return BoardThemeColors(
-//                lightSquare: Color(red: 0.94, green: 0.86, blue: 0.76),
-//                darkSquare: Color(red: 0.56, green: 0.41, blue: 0.26),
-//                borderColor: .brown,
-//                highlightColor: .green.opacity(0.5),
-//                checkColor: .red.opacity(0.7)
-//            )
-//        }
-//    }
-//    
-//    var currentColors: BoardThemeColors {
-//        getColors(for: currentTheme)
-//    }
-//    //    }
-//    
-//    
-//    // MARK: - StyledBoardView.swift
-//    struct StyledBoardView: View {
-//        @ObservedObject var game: ChessGame
-//        let gradientColors: [Color]
-//        @StateObject private var themeManager = ThemeManager.shared
-//        
-//        var body: some View {
-//            VStack(spacing: 0) {
-//                ForEach(0..<8, id: \.self) { row in
-//                    HStack(spacing: 0) {
-//                        ForEach(0..<8, id: \.self) { col in
-//                            ThemedChessSquare(
-//                                row: row,
-//                                col: col,
-//                                piece: game.board[row][col],
-//                                isSelected: game.selectedPiece?.position.row == row &&
-//                                game.selectedPiece?.position.col == col,
-//                                isValidMove: game.validMoves.contains { $0.0 == row && $0.1 == col },
-//                                isKingInCheck: game.isKingAtRisk(row: row, col: col),
-//                                themeColors: themeManager.currentColors
-//                            ) {
-//                                if let piece = game.board[row][col] {
-//                                    game.selectPiece(at: row, col: col)
-//                                } else if !game.validMoves.isEmpty {
-//                                    game.movePiece(to: row, col: col)
-//                                } else {
-//                                    game.selectPiece(at: row, col: col)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            .overlay(
-//                RoundedRectangle(cornerRadius: 10)
-//                    .stroke(themeManager.currentColors.borderColor, lineWidth: 3)
-//            )
-//            .clipShape(RoundedRectangle(cornerRadius: 8))
-//            .shadow(radius: 10)
-//            .onChange(of: themeManager.currentTheme) { oldValue, newValue in
-//                game.objectWillChange.send()
-//            }
-//        }
-//    }
-//    
-//    
-//    
-//    // MARK: - ThemedChessSquare.swift
-//    struct ThemedChessSquare: View {
-//        let row: Int
-//        let col: Int
-//        let piece: ChessPiece?
-//        let isSelected: Bool
-//        let isValidMove: Bool
-//        let isKingInCheck: Bool
-//        let themeColors: BoardThemeColors
-//        let action: () -> Void
-//        
-//        private var isLightSquare: Bool {
-//            (row + col) % 2 == 0
-//        }
-//        
-//        var body: some View {
-//            Button(action: action) {
-//                ZStack {
-//                    // Fond de la case avec image ou couleur
-//                    Group {
-//                        if isLightSquare {
-//                            if let image = themeColors.lightSquareImage {
-//                                image
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                            } else {
-//                                Rectangle()
-//                                    .fill(themeColors.lightSquare)
-//                            }
-//                        } else {
-//                            if let image = themeColors.darkSquareImage {
-//                                image
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                            } else {
-//                                Rectangle()
-//                                    .fill(themeColors.darkSquare)
-//                            }
-//                        }
-//                    }
-//                    .overlay(
-//                        Rectangle()
-//                            .stroke(themeColors.borderColor, lineWidth: 1)
-//                    )
-//                    
-//                    // Surbrillance pour la case sélectionnée
-//                    if isSelected {
-//                        Rectangle()
-//                            .stroke(Color.blue, lineWidth: 3)
-//                            .padding(2)
-//                    }
-//                    
-//                    // Surbrillance pour le mouvement valide
-//                    if isValidMove {
-//                        if piece == nil {
-//                            // Case vide : cercle
-//                            Circle()
-//                                .fill(themeColors.highlightColor)
-//                                .frame(width: 30, height: 30)
-//                                .overlay(
-//                                    Circle()
-//                                        .stroke(Color.white, lineWidth: 1)
-//                                )
-//                        } else {
-//                            // Case avec pièce : contour
-//                            Rectangle()
-//                                .stroke(themeColors.highlightColor, lineWidth: 4)
-//                        }
-//                    }
-//                    
-//                    // Surbrillance rouge si le roi est en échec
-//                    if isKingInCheck {
-//                        Rectangle()
-//                            .fill(themeColors.checkColor)
-//                            .opacity(0.3)
-//                    }
-//                    
-//                    // La pièce d'échec
-//                    if let piece = piece {
-//                        Text(piece.type.rawValue)
-//                            .font(.system(size: 40))
-//                            .foregroundColor(piece.color == .white ? .white : .black)
-//                            .shadow(color: .black.opacity(0.5), radius: 3, x: 2, y: 2)
-//                            .shadow(color: .white.opacity(0.3), radius: 2, x: -1, y: -1)
-//                    }
-//                }
-//            }
-//            .frame(height: UIScreen.main.bounds.width / 9)
-//            .clipShape(Rectangle())
-//        }
-//    }
-//}
-//    
-    
-    
-    
-    
-    //gg
-    
-    
-    
-    
-//}
 
 
 struct BoardThemeColors {
@@ -1073,30 +764,30 @@ struct BoardThemeColors {
 
 // MARK: - ThemeManager
 class ThemeManager: ObservableObject {
-static let shared = ThemeManager()
-
-@AppStorage("boardTheme") var currentTheme: String = BoardTheme.classic.rawValue {
-    didSet {
-        objectWillChange.send()
+    static let shared = ThemeManager()
+    
+    @AppStorage("boardTheme") var currentTheme: String = BoardTheme.classic.rawValue {
+        didSet {
+            objectWillChange.send()
+        }
     }
-}
-
-func getColors(for theme: String) -> ChessGame.BoardThemeColors {
-    switch theme {
-    case BoardTheme.classic.rawValue:
-        return ChessGame.BoardThemeColors(
-            lightSquare: Color(red: 0.94, green: 0.86, blue: 0.76),
-            darkSquare: Color(red: 0.56, green: 0.41, blue: 0.26),
-            borderColor: .brown,
-            highlightColor: .green.opacity(0.5),
-            checkColor: .red.opacity(0.7)
-        )
-        
-    case BoardTheme.wood.rawValue:
+    
+    func getColors(for theme: String) -> ChessGame.BoardThemeColors {
+        switch theme {
+        case BoardTheme.classic.rawValue:
+            return ChessGame.BoardThemeColors(
+                lightSquare: Color(red: 0.94, green: 0.86, blue: 0.76),
+                darkSquare: Color(red: 0.56, green: 0.41, blue: 0.26),
+                borderColor: .brown,
+                highlightColor: .green.opacity(0.5),
+                checkColor: .red.opacity(0.7)
+            )
+            
+        case BoardTheme.wood.rawValue:
             print("🎨 Chargement du thème Bois")
             print("   - WoodLight existe: \(UIImage(named: "WoodLight") != nil)")
             print("   - WoodDark existe: \(UIImage(named: "WoodDark") != nil)")
-        return ChessGame.BoardThemeColors(
+            return ChessGame.BoardThemeColors(
                 lightSquare: .clear,
                 darkSquare: .clear,
                 borderColor: Color(red: 0.36, green: 0.25, blue: 0.15),
@@ -1105,224 +796,35 @@ func getColors(for theme: String) -> ChessGame.BoardThemeColors {
                 lightSquareImage: Image("WoodLight"),
                 darkSquareImage: Image("WoodDark")
             )
-        
-    case BoardTheme.purple.rawValue:
-        return ChessGame.BoardThemeColors(
-            lightSquare: Color(red: 0.9, green: 0.8, blue: 0.95),
-            darkSquare: Color(red: 0.5, green: 0.3, blue: 0.7),
-            borderColor: .purple,
-            highlightColor: .cyan.opacity(0.5),
-            checkColor: .pink.opacity(0.8)
-        )
-        
-    default:
-        return ChessGame.BoardThemeColors(
-            lightSquare: Color(red: 0.94, green: 0.86, blue: 0.76),
-            darkSquare: Color(red: 0.56, green: 0.41, blue: 0.26),
-            borderColor: .brown,
-            highlightColor: .green.opacity(0.5),
-            checkColor: .red.opacity(0.7)
-        )
+            
+        case BoardTheme.purple.rawValue:
+            return ChessGame.BoardThemeColors(
+                lightSquare: Color(red: 0.9, green: 0.8, blue: 0.95),
+                darkSquare: Color(red: 0.5, green: 0.3, blue: 0.7),
+                borderColor: .purple,
+                highlightColor: .cyan.opacity(0.5),
+                checkColor: .pink.opacity(0.8)
+            )
+            
+        default:
+            return ChessGame.BoardThemeColors(
+                lightSquare: Color(red: 0.94, green: 0.86, blue: 0.76),
+                darkSquare: Color(red: 0.56, green: 0.41, blue: 0.26),
+                borderColor: .brown,
+                highlightColor: .green.opacity(0.5),
+                checkColor: .red.opacity(0.7)
+            )
+        }
     }
-}
-
+    
     
     
     
     
     var currentColors: ChessGame.BoardThemeColors {
-    getColors(for: currentTheme)
+        getColors(for: currentTheme)
+    }
 }
-}
-
-//// MARK: - AudioManager
-//class AudioManager: ObservableObject {
-//static let shared = AudioManager()
-//
-//@Published var musicEnabled: Bool = true
-//@Published var musicVolume: Double = 0.5
-//
-//func playMoveSound() {
-//    // Implémentez votre logique de son ici
-//    print("Play move sound")
-//}
-//}
-
-//// MARK: - StyledBoardView.swift
-//struct StyledBoardView: View {
-//@ObservedObject var game: ChessGame
-//let gradientColors: [Color]
-//@StateObject private var themeManager = ThemeManager.shared
-//
-//var body: some View {
-//    VStack(spacing: 0) {
-//        ForEach(0..<8, id: \.self) { row in
-//            HStack(spacing: 0) {
-//                ForEach(0..<8, id: \.self) { col in
-//                    ThemedChessSquare(
-//                        row: row,
-//                        col: col,
-//                        piece: game.board[row][col],
-//                        isSelected: game.selectedPiece?.position.row == row &&
-//                        game.selectedPiece?.position.col == col,
-//                        isValidMove: game.validMoves.contains { $0.0 == row && $0.1 == col },
-//                        isKingInCheck: game.isKingAtRisk(row: row, col: col),
-//                        themeColors: themeManager.currentColors
-//                    ) {
-//                        if let piece = game.board[row][col] {
-//                            game.selectPiece(at: row, col: col)
-//                        } else if !game.validMoves.isEmpty {
-//                            game.movePiece(to: row, col: col)
-//                        } else {
-//                            game.selectPiece(at: row, col: col)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    .overlay(
-//        RoundedRectangle(cornerRadius: 10)
-//            .stroke(themeManager.currentColors.borderColor, lineWidth: 3)
-//    )
-//    .clipShape(RoundedRectangle(cornerRadius: 8))
-//    .shadow(radius: 10)
-//    .onChange(of: themeManager.currentTheme) { oldValue, newValue in
-//        game.objectWillChange.send()
-//    }
-//}
-//}
-
-//// MARK: - ThemedChessSquare.swift
-//struct ThemedChessSquare: View {
-//let row: Int
-//let col: Int
-//let piece: ChessPiece?
-//let isSelected: Bool
-//let isValidMove: Bool
-//let isKingInCheck: Bool
-//let themeColors: ChessGame.BoardThemeColors
-//let action: () -> Void
-//
-//private var isLightSquare: Bool {
-//    (row + col) % 2 == 0
-//}
-//
-//var body: some View {
-//    Button(action: action) {
-//        ZStack {
-//            // Fond de la case avec image ou couleur
-//            Group {
-//                if isLightSquare {
-//                    if let image = themeColors.lightSquareImage {
-//                        image
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fill)
-//                    } else {
-//                        Rectangle()
-//                            .fill(themeColors.lightSquare)
-//                    }
-//                } else {
-//                    if let image = themeColors.darkSquareImage {
-//                        image
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fill)
-//                    } else {
-//                        Rectangle()
-//                            .fill(themeColors.darkSquare)
-//                    }
-//                }
-//            }
-//            .overlay(
-//                Rectangle()
-//                    .stroke(themeColors.borderColor, lineWidth: 1)
-//            )
-//            
-//            // Surbrillance pour la case sélectionnée
-//            if isSelected {
-//                Rectangle()
-//                    .stroke(Color.blue, lineWidth: 3)
-//                    .padding(2)
-//            }
-//            
-//            // Surbrillance pour le mouvement valide
-//            if isValidMove {
-//                if piece == nil {
-//                    // Case vide : cercle
-//                    Circle()
-//                        .fill(themeColors.highlightColor)
-//                        .frame(width: 30, height: 30)
-//                        .overlay(
-//                            Circle()
-//                                .stroke(Color.white, lineWidth: 1)
-//                        )
-//                } else {
-//                    // Case avec pièce : contour
-//                    Rectangle()
-//                        .stroke(themeColors.highlightColor, lineWidth: 4)
-//                }
-//            }
-//            
-//            // Surbrillance rouge si le roi est en échec
-//            if isKingInCheck {
-//                Rectangle()
-//                    .fill(themeColors.checkColor)
-//                    .opacity(0.3)
-//            }
-//            
-//            // La pièce d'échec
-//            if let piece = piece {
-//                Text(piece.type.rawValue)
-//                    .font(.system(size: 40))
-//                    .foregroundColor(piece.color == .white ? .white : .black)
-//                    .shadow(color: .black.opacity(0.5), radius: 3, x: 2, y: 2)
-//                    .shadow(color: .white.opacity(0.3), radius: 2, x: -1, y: -1)
-//            }
-//        }
-//    }
-//    .frame(height: UIScreen.main.bounds.width / 9)
-//    .clipShape(Rectangle())
-//}
-//}
-
-//// MARK: - CapturedPiecesView
-//struct CapturedPiecesView: View {
-//let blackCapturedCount: Int
-//let whiteCapturedCount: Int
-//
-//var body: some View {
-//    HStack(spacing: 15) {
-//        // Pièces noires capturées
-//        HStack(spacing: 2) {
-//            Image(systemName: "xmark.circle.fill")
-//                .foregroundColor(.red)
-//                .font(.caption)
-//            Text("\(blackCapturedCount)")
-//                .foregroundColor(.white)
-//                .font(.headline)
-//        }
-//        .padding(.horizontal, 8)
-//        .padding(.vertical, 4)
-//        .background(Color.black.opacity(0.5))
-//        .cornerRadius(8)
-//        
-//        // Pièces blanches capturées
-//        HStack(spacing: 2) {
-//            Image(systemName: "xmark.circle.fill")
-//                .foregroundColor(.red)
-//                .font(.caption)
-//            Text("\(whiteCapturedCount)")
-//                .foregroundColor(.white)
-//                .font(.headline)
-//        }
-//        .padding(.horizontal, 8)
-//        .padding(.vertical, 4)
-//        .background(Color.white.opacity(0.2))
-//        .cornerRadius(8)
-//    }
-//}
-//}
-
 //gg
 
 
