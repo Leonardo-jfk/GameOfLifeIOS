@@ -268,3 +268,246 @@ struct ControlButton: View {
     }
 }
 
+// MARK: - HintView
+struct HintView: View {
+    @ObservedObject var game: ChessGame
+    @Environment(\.dismiss) var dismiss
+    @State private var suggestedMove: ChessGame.BotMove?
+    @State private var isLoading = true
+    @State private var showError = false
+    
+    var body: some View {
+        ZStack {
+            // Fond
+            LinearGradient(
+                gradient: Gradient(colors: [Color.purple.opacity(0.7), Color.black]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
+            VStack(spacing: 25) {
+                // En-tête
+                HStack {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(.yellow)
+                    Text("Conseil du Bot")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.white)
+                }
+                
+                if isLoading {
+                    // Chargement
+                    VStack(spacing: 20) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(1.5)
+                        
+                        Text("Le bot réfléchit...")
+                            .foregroundColor(.white)
+                            .font(.headline)
+                    }
+                    .padding(40)
+                } else if let move = suggestedMove {
+                    // Conseil trouvé
+                    VStack(spacing: 20) {
+                        // Échiquier miniature avec le mouvement
+                        HintBoardPreview(
+                            game: game,
+                            from: move.from,
+                            to: move.to
+                        )
+                        .frame(width: 200, height: 200)
+                        .padding()
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(20)
+                        
+                        // Description du mouvement
+                        VStack(spacing: 15) {
+                            Text("🎯 Mouvement suggéré")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.yellow)
+                            
+                            HStack(spacing: 30) {
+                                // Pièce à déplacer
+                                if let piece = game.board[move.from.row][move.from.col] {
+                                    VStack {
+                                        Text(piece.type.rawValue)
+                                            .font(.system(size: 40))
+                                        Text("De")
+                                            .font(.caption)
+                                            .foregroundColor(.gray)
+                                        Text("\(positionToString(move.from))")
+                                            .font(.title3)
+                                            .bold()
+                                    }
+                                }
+                                
+                                Image(systemName: "arrow.right")
+                                    .font(.title)
+                                    .foregroundColor(.green)
+                                
+                                // Destination
+                                VStack {
+                                    Text(game.board[move.to.row][move.to.col]?.type.rawValue ?? "⬜")
+                                        .font(.system(size: 40))
+                                        .opacity(game.board[move.to.row][move.to.col] == nil ? 0.3 : 1)
+                                    Text("Vers")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                    Text("\(positionToString(move.to))")
+                                        .font(.title3)
+                                        .bold()
+                                }
+                            }
+                            .padding()
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(15)
+                            
+                            if game.board[move.to.row][move.to.col] != nil {
+                                Text("⚠️ Ce mouvement capturera une pièce adverse")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+                            }
+                        }
+                        
+                        // Boutons d'action
+                        VStack(spacing: 12) {
+                            Button(action: {
+                                // Jouer le mouvement suggéré
+                                game.selectPiece(at: move.from.row, col: move.from.col)
+                                game.movePiece(to: move.to.row, col: move.to.col)
+                                dismiss()
+                            }) {
+                                HStack {
+                                    Image(systemName: "play.fill")
+                                    Text("Jouer ce coup")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                            }
+                            
+                            Button(action: {
+                                dismiss()
+                            }) {
+                                Text("Garder mon idée")
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.3))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(12)
+                            }
+                        }
+                        .padding(.top)
+                    }
+                } else if showError {
+                    // Erreur
+                    VStack(spacing: 20) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 60))
+                            .foregroundColor(.orange)
+                        
+                        Text("Aucun conseil disponible")
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.white)
+                        
+                        Text("Le bot n'a trouvé aucun mouvement valide pour vous.")
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                        
+                        Button("OK") {
+                            dismiss()
+                        }
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                }
+            }
+            .padding()
+        }
+        .task {
+            // Calculer le conseil de manière asynchrone
+            await calculateHint()
+        }
+    }
+    
+    private func calculateHint() async {
+        isLoading = true
+        showError = false
+        
+        // Simuler un délai pour l'UX
+        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 seconde
+        
+        // Obtenir le conseil pour le joueur actuel
+        let move = game.getHint(for: game.currentPlayer)
+        
+        await MainActor.run {
+            if let move = move {
+                suggestedMove = move
+            } else {
+                showError = true
+            }
+            isLoading = false
+        }
+    }
+    
+    private func positionToString(_ pos: (row: Int, col: Int)) -> String {
+        let colLetter = ["A", "B", "C", "D", "E", "F", "G", "H"][pos.col]
+        let rowNumber = 8 - pos.row
+        return "\(colLetter)\(rowNumber)"
+    }
+}
+
+// MARK: - HintBoardPreview
+struct HintBoardPreview: View {
+    @ObservedObject var game: ChessGame
+    let from: (row: Int, col: Int)
+    let to: (row: Int, col: Int)
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(0..<8, id: \.self) { row in
+                HStack(spacing: 0) {
+                    ForEach(0..<8, id: \.self) { col in
+                        ZStack {
+                            // Couleur de la case
+                            Rectangle()
+                                .fill((row + col) % 2 == 0 ?
+                                      Color(red: 0.94, green: 0.86, blue: 0.76) :
+                                      Color(red: 0.56, green: 0.41, blue: 0.26))
+                            
+                            // Surbrillance pour le mouvement suggéré
+                            if row == from.row && col == from.col {
+                                Rectangle()
+                                    .stroke(Color.blue, lineWidth: 3)
+                            }
+                            if row == to.row && col == to.col {
+                                Rectangle()
+                                    .stroke(Color.green, lineWidth: 3)
+                                    .background(Color.green.opacity(0.2))
+                            }
+                            
+                            // Pièce
+                            if let piece = game.board[row][col] {
+                                Text(piece.type.rawValue)
+                                    .font(.system(size: 20))
+                                    .foregroundColor(piece.color == .white ? .white : .black)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

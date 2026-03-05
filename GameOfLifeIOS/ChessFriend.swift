@@ -85,10 +85,13 @@ struct ChessFriend: View {
                                 .frame(width: 50, height: 50)
                                 .background(Circle().fill(Color.black.opacity(0.7)))
                             
-                            Text("Consejo")
+                            Text("Conseil")
                                 .font(.caption)
                                 .foregroundColor(.white)
                         }
+                    }
+                    .sheet(isPresented: $showHint) {
+                        HintView(game: game)
                     }
                     
                     // Botón Reset

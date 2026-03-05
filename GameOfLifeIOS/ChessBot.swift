@@ -78,6 +78,23 @@ struct ChessBot: View {
                 // Barra de controles REDISEÑADA
                 HStack(spacing: 20) {
                     // Botón de Hint (nuevo)
+//                    Button(action: {
+//                        showHint.toggle()
+//                    }) {
+//                        VStack(spacing: 5) {
+//                            Image(systemName: "lightbulb")
+//                                .font(.title2)
+//                                .foregroundColor(.yellow)
+//                                .frame(width: 50, height: 50)
+//                                .background(Circle().fill(Color.black.opacity(0.7)))
+//                            
+//                            Text("Consejo")
+//                                .font(.caption)
+//                                .foregroundColor(.white)
+//                        }
+//                    }
+                    
+                    // Bouton de Hint (Consejo)
                     Button(action: {
                         showHint.toggle()
                     }) {
@@ -88,10 +105,13 @@ struct ChessBot: View {
                                 .frame(width: 50, height: 50)
                                 .background(Circle().fill(Color.black.opacity(0.7)))
                             
-                            Text("Consejo")
+                            Text("Conseil")
                                 .font(.caption)
                                 .foregroundColor(.white)
                         }
+                    }
+                    .sheet(isPresented: $showHint) {
+                        HintView(game: game)
                     }
                     
                     // Botón Reset

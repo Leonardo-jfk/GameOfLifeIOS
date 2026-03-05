@@ -760,6 +760,83 @@ struct BoardThemeColors {
     var lightSquareImage: Image? = nil
     var darkSquareImage: Image? = nil
 }
+    
+    
+    
+    // MARK: - Conseil pour l'utilisateur
+    func getHint(for color: PieceColor) -> BotMove? {
+        // On utilise le board actuel
+        let currentBoardSnapshot = self.board
+        
+        // Profondeur 3 pour un conseil de qualité moyenne
+        let depth = 3
+        
+        var bestMove: BotMove?
+        var bestValue = (color == .white) ? 10000 : -10000 // Inversé selon la couleur
+        
+        // Obtenir tous les mouvements possibles pour la couleur demandée
+        let possibleMoves = self.getAllPossibleMoves(for: color, on: currentBoardSnapshot)
+        var tempBoard = currentBoardSnapshot
+        
+        print("🤔 Calcul du conseil pour \(color == .white ? "Blancs" : "Noirs")...")
+        
+        for move in possibleMoves {
+            let captured = tempBoard[move.to.row][move.to.col]
+            
+            // Faire le coup
+            tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
+            tempBoard[move.from.row][move.from.col] = nil
+            
+            // Évaluer le coup avec minimax
+            let boardValue = self.minimax(
+                boardState: tempBoard,
+                depth: depth - 1,
+                isMaximizing: color == .black, // Si c'est au tour des noirs, on maximise
+                alpha: -10000,
+                beta: 10000
+            )
+            
+            // Annuler le coup
+            tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
+            tempBoard[move.to.row][move.to.col] = captured
+            
+            // Pour les blancs on cherche la valeur la plus basse (car ils minimisent)
+            // Pour les noirs on cherche la valeur la plus haute (car ils maximisent)
+            if color == .white {
+                if boardValue < bestValue {
+                    bestValue = boardValue
+                    bestMove = move
+                }
+            } else {
+                if boardValue > bestValue {
+                    bestValue = boardValue
+                    bestMove = move
+                }
+            }
+        }
+        
+        if let move = bestMove {
+            print("💡 Conseil trouvé: de (\(move.from.row),\(move.from.col)) à (\(move.to.row),\(move.to.col))")
+        } else {
+            print("❌ Aucun conseil trouvé")
+        }
+        
+        return bestMove
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 } // <-- Cette accolade ferme la classe ChessGame
 
 // MARK: - ThemeManager
