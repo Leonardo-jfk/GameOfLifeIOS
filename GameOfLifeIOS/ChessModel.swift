@@ -85,6 +85,9 @@ class ChessGame: ObservableObject {
     @Published var winner: PieceColor? = nil
     @Published var gameEndReason: GameEndReason?
     
+    @AppStorage("BotDifficulty") var botDifficulty: String = BotDifficulty.medium.rawValue
+
+    
     init() {
         setupBoard()
     }
@@ -670,8 +673,23 @@ class ChessGame: ObservableObject {
                 // Faire le coup
                 tempBoard[move.to.row][move.to.col] = tempBoard[move.from.row][move.from.col]
                 tempBoard[move.from.row][move.from.col] = nil
+               
+//                //niveux d'echeque
+//                var depthLevel = 1
+//                if x { depthLevel = 3}
+//                if z { depthLevel = 5}
+//                
+//                let boardValue = self.minimax(boardState: tempBoard, depth: depthLevel, isMaximizing: false, alpha: -10000, beta: 10000)
+
+                let Botdepth = getBotDepth()
                 
-                let boardValue = self.minimax(boardState: tempBoard, depth: 2, isMaximizing: false, alpha: -10000, beta: 10000)
+                let boardValue = self.minimax(
+                                    boardState: tempBoard,
+                                    depth: Botdepth,
+                                    isMaximizing: false,
+                                    alpha: -10000,
+                                    beta: 10000
+                                )
                 
                 // Annuler le coup
                 tempBoard[move.from.row][move.from.col] = tempBoard[move.to.row][move.to.col]
@@ -691,6 +709,19 @@ class ChessGame: ObservableObject {
             }
         }
     }
+    
+    private func getBotDepth() -> Int {
+            switch botDifficulty {
+            case BotDifficulty.easy.rawValue:
+                return 1  // Facile: ne regarde qu'1 coup ahead
+            case BotDifficulty.medium.rawValue:
+                return 3  // Moyen: regarde 3 coups ahead
+            case BotDifficulty.hard.rawValue:
+                return 5  // Difficile: regarde 5 coups ahead
+            default:
+                return 2
+            }
+        }
 
     private func simulateMove(on board: [[ChessPiece?]], move: BotMove) -> [[ChessPiece?]] {
         var newBoard = board  // Crée une nouvelle copie
