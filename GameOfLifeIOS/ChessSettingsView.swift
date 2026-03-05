@@ -46,17 +46,32 @@ import Combine
                                     themeManager.currentTheme = theme.rawValue
                                 }) {
                                     HStack {
-                                        // Petit aperçu des couleurs
-                                        HStack(spacing: 2) {
-                                            Rectangle()
-                                                .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
-                                                .frame(width: 20, height: 20)
-                                            Rectangle()
-                                                .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
-                                                .frame(width: 20, height: 20)
-                                        }
-                                        .cornerRadius(4)
-                                        .padding(.trailing, 8)
+                                                    // Partie gauche avec largeur FIXE pour tous
+                                                    HStack(spacing: 8) {
+                                                        // Zone de l'icône - même largeur pour tous
+                                                        Group {
+                                                            if theme.rawValue == BoardTheme.wood.rawValue {
+                                                                Image(systemName: "tree")
+                                                                    .foregroundColor(.gray)
+                                                                    .font(.system(size: 16))
+                                                            } else {
+                                                                Color.clear
+                                                            }
+                                                        }
+                                                        .frame(width: 24, height: 24) // Largeur fixe pour l'icône
+                                                        
+                                                        // Aperçu des couleurs
+                                                        HStack(spacing: 2) {
+                                                            Rectangle()
+                                                                .fill(themeManager.getColors(for: theme.rawValue).lightSquare)
+                                                                .frame(width: 24, height: 24)
+                                                            Rectangle()
+                                                                .fill(themeManager.getColors(for: theme.rawValue).darkSquare)
+                                                                .frame(width: 24, height: 24)
+                                                        }
+                                                        .cornerRadius(4)
+                                                    }
+                                                    .frame(width: 90, alignment: .leading) // Largeur fixe pour toute la partie gauche
                                         
                                         Text(theme.rawValue)
                                             .foregroundColor(.white)
