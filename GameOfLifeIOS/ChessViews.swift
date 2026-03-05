@@ -151,6 +151,168 @@ extension Color {
 
 
 // MARK: - ChessSquareView
+//struct ChessSquareView: View {
+//    @ObservedObject var game: ChessGame
+//    let row: Int
+//    let col: Int
+//    @StateObject private var themeManager = ThemeManager.shared
+//    
+//    var isSelected: Bool {
+//        game.selectedPiece?.position.row == row &&
+//        game.selectedPiece?.position.col == col
+//    }
+//    
+//    var isValidMove: Bool {
+//        game.validMoves.contains { $0.row == row && $0.col == col }
+//    }
+//    
+//    var isLightSquare: Bool {
+//        (row + col) % 2 == 0
+//    }
+//    
+//    var isUnderAttack: Bool {
+//        guard let piece = game.board[row][col] else { return false }
+//        
+//        switch piece.type {
+//        case .king:
+//            return game.isKingInCheck(of: piece.color)
+//        case .queen:
+//            return game.isQueenInCheck(of: piece.color)
+//        default:
+//            return false
+//        }
+//    }
+//    
+//    var body: some View {
+//        ZStack {
+//            // Fond de la case avec le thème
+//            Group {
+////                if isLightSquare {
+////                    if let image = themeManager.currentColors.lightSquareImage {
+////                        image
+////                            .resizable()
+////                            .aspectRatio(contentMode: .fill)
+////                    } else {
+////                        Rectangle()
+////                            .fill(themeManager.currentColors.lightSquare)
+////                    }
+////                } else {
+////                    if let image = themeManager.currentColors.darkSquareImage {
+////                        image
+////                            .resizable()
+////                            .aspectRatio(contentMode: .fill)
+////                    } else {
+////                        Rectangle()
+////                            .fill(themeManager.currentColors.darkSquare)
+////                    }
+////                }
+//                if isLightSquare {
+//                                    if themeManager.currentTheme == BoardTheme.wood.rawValue {
+//                                        // Pour le thème bois, utiliser les images directement
+//                                        if let _ = UIImage(named: "WoodLight") {
+//                                            Image("WoodLight")
+//                                                .resizable()
+//                                                .aspectRatio(contentMode: .fill)
+//                                        } else {
+//                                            // Fallback si l'image n'existe pas
+//                                            Rectangle()
+//                                                .fill(Color(red: 0.95, green: 0.83, blue: 0.69))
+//                                            // Afficher un texte de débogage
+//                                            Text("⚠️")
+//                                                .foregroundColor(.red)
+//                                                .font(.caption)
+//                                        }
+//                                    } else {
+//                                        // Pour les autres thèmes, utiliser la couleur
+//                                        Rectangle()
+//                                            .fill(themeManager.currentColors.lightSquare)
+//                                    }
+//                                } else {
+//                                    if themeManager.currentTheme == BoardTheme.wood.rawValue {
+//                                        // Pour le thème bois, utiliser les images directement
+//                                        if let _ = UIImage(named: "WoodDark") {
+//                                            Image("WoodDark")
+//                                                .resizable()
+//                                                .aspectRatio(contentMode: .fill)
+//                                        } else {
+//                                            // Fallback si l'image n'existe pas
+//                                            Rectangle()
+//                                                .fill(Color(red: 0.52, green: 0.35, blue: 0.19))
+//                                            // Afficher un texte de débogage
+//                                            Text("⚠️")
+//                                                .foregroundColor(.red)
+//                                                .font(.caption)
+//                                        }
+//                                    } else {
+//                                        // Pour les autres thèmes, utiliser la couleur
+//                                        Rectangle()
+//                                            .fill(themeManager.currentColors.darkSquare)
+//                                    }
+//                                }
+//                
+//                
+//                
+//                
+//            }
+//            .overlay(
+//                Group {
+//                    if isSelected {
+//                        Rectangle()
+//                            .strokeBorder(Color.blue, lineWidth: 4)
+//                            .padding(2)
+//                    } else if isValidMove {
+//                        if game.board[row][col] == nil {
+//                            // Case vide : cercle de mouvement
+//                            Circle()
+//                                .fill(themeManager.currentColors.highlightColor)
+//                                .frame(width: 30, height: 30)
+//                                .overlay(
+//                                    Circle()
+//                                        .stroke(Color.white, lineWidth: 1)
+//                                )
+//                        } else {
+//                            // Case avec pièce : contour de capture
+//                            Rectangle()
+//                                .stroke(themeManager.currentColors.highlightColor, lineWidth: 4)
+//                        }
+//                    }
+//                }
+//            )
+//            
+//            // Indicateur d'attaque (roi/queen en échec)
+//            if isUnderAttack {
+//                Circle()
+//                    .fill(themeManager.currentColors.checkColor)
+//                    .opacity(0.3)
+//                    .shadow(color: themeManager.currentColors.checkColor, radius: 10)
+//                    .padding(2)
+//                
+//                Circle()
+//                    .stroke(themeManager.currentColors.checkColor, lineWidth: 2)
+//                    .padding(2)
+//            }
+//            
+//            // Pièce d'échecs
+//            if let piece = game.board[row][col] {
+//                Text(piece.type.rawValue)
+//                    .font(.system(size: 30))
+//                    .foregroundColor(piece.color == .white ? .white : .black)
+//                    .shadow(color: .black.opacity(0.5), radius: 3, x: 2, y: 2)
+//                    .shadow(color: .white.opacity(0.3), radius: 2, x: -1, y: -1)
+//            }
+//        }
+//        .aspectRatio(1, contentMode: .fit)
+//        .onTapGesture {
+//            if let selected = game.selectedPiece, isValidMove {
+//                game.movePiece(to: row, col: col)
+//            } else {
+//                game.selectPiece(at: row, col: col)
+//            }
+//        }
+//    }
+//}
+
+// MARK: - ChessSquareView
 struct ChessSquareView: View {
     @ObservedObject var game: ChessGame
     let row: Int
@@ -188,8 +350,8 @@ struct ChessSquareView: View {
             // Fond de la case avec le thème
             Group {
                 if isLightSquare {
-                    if let image = themeManager.currentColors.lightSquareImage {
-                        image
+                    if themeManager.currentTheme == BoardTheme.wood.rawValue {
+                        Image("WoodLight")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     } else {
@@ -197,8 +359,8 @@ struct ChessSquareView: View {
                             .fill(themeManager.currentColors.lightSquare)
                     }
                 } else {
-                    if let image = themeManager.currentColors.darkSquareImage {
-                        image
+                    if themeManager.currentTheme == BoardTheme.wood.rawValue {
+                        Image("WoodDark")
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     } else {
@@ -215,7 +377,6 @@ struct ChessSquareView: View {
                             .padding(2)
                     } else if isValidMove {
                         if game.board[row][col] == nil {
-                            // Case vide : cercle de mouvement
                             Circle()
                                 .fill(themeManager.currentColors.highlightColor)
                                 .frame(width: 30, height: 30)
@@ -224,7 +385,6 @@ struct ChessSquareView: View {
                                         .stroke(Color.white, lineWidth: 1)
                                 )
                         } else {
-                            // Case avec pièce : contour de capture
                             Rectangle()
                                 .stroke(themeManager.currentColors.highlightColor, lineWidth: 4)
                         }
@@ -232,7 +392,6 @@ struct ChessSquareView: View {
                 }
             )
             
-            // Indicateur d'attaque (roi/queen en échec)
             if isUnderAttack {
                 Circle()
                     .fill(themeManager.currentColors.checkColor)
@@ -245,7 +404,6 @@ struct ChessSquareView: View {
                     .padding(2)
             }
             
-            // Pièce d'échecs
             if let piece = game.board[row][col] {
                 Text(piece.type.rawValue)
                     .font(.system(size: 30))
@@ -264,8 +422,6 @@ struct ChessSquareView: View {
         }
     }
 }
-
-
 
 
 

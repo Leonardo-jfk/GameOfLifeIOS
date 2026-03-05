@@ -1093,15 +1093,18 @@ func getColors(for theme: String) -> ChessGame.BoardThemeColors {
         )
         
     case BoardTheme.wood.rawValue:
+            print("🎨 Chargement du thème Bois")
+            print("   - WoodLight existe: \(UIImage(named: "WoodLight") != nil)")
+            print("   - WoodDark existe: \(UIImage(named: "WoodDark") != nil)")
         return ChessGame.BoardThemeColors(
-            lightSquare: .clear,
-            darkSquare: .clear,
-            borderColor: Color(red: 0.36, green: 0.25, blue: 0.15),
-            highlightColor: .yellow.opacity(0.4),
-            checkColor: .orange.opacity(0.8),
-            lightSquareImage: Image("WoodLight"),
-            darkSquareImage: Image("WoodDark")
-        )
+                lightSquare: .clear,
+                darkSquare: .clear,
+                borderColor: Color(red: 0.36, green: 0.25, blue: 0.15),
+                highlightColor: .yellow.opacity(0.4),
+                checkColor: .orange.opacity(0.8),
+                lightSquareImage: Image("WoodLight"),
+                darkSquareImage: Image("WoodDark")
+            )
         
     case BoardTheme.purple.rawValue:
         return ChessGame.BoardThemeColors(
@@ -1123,6 +1126,10 @@ func getColors(for theme: String) -> ChessGame.BoardThemeColors {
     }
 }
 
+    
+    
+    
+    
     var currentColors: ChessGame.BoardThemeColors {
     getColors(for: currentTheme)
 }
