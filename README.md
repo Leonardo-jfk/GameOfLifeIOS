@@ -162,14 +162,27 @@ To run the project in your local environment, follow these steps:
 2. **Open the project in Xcode:**
  ```bash
     open GameOfLifeIOS.xcodeproj
-  
+  :q 
+:q!
+
+
+
 
 3. Wait for Swift Package Manager to resolve dependencies (Lottie).
 4. Select a target (simulator or physical device).
 5. Press Run (⌘R) to build and launch the app.
 
+sdds
 
-
-      
+      cs
+:Q
 
  ⭐ If this project inspires you, consider giving it a star on GitHub!
+
+
+ dsds
+
+sa
+@da
+  d
+/;  a
